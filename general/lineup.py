@@ -2,7 +2,7 @@ import operator as op
 from ortools.linear_solver import pywraplp
 from .models import *
 
-import pdb
+
 class Roster:
     POSITION_ORDER = {
         "P": 0,

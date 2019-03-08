@@ -32,7 +32,7 @@ def _deviation_projection(val, salary, ds):
 
 def get_players(data_source):
     try:
-        url = 'https://www.rotowire.com/daily/tables/optimizer-nba.php?sport=NBA&' + \
+        url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
               'site={}&projections=&type=main&slate=all'.format(data_source)
 
         players = requests.get(url).json()

@@ -15,7 +15,7 @@ from general import html2text
 
 def get_games(data_source):
     slate = 'Main' if data_source == 'FanDuel' else 'all'
-    url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NBA&' + \
+    url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=MLB&' + \
           'site={}&type=main&slate={}'.format(data_source, slate)
 
     games = requests.get(url).json()
