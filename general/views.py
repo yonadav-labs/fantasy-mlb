@@ -18,7 +18,6 @@ from django.forms.models import model_to_dict
 
 from general.models import *
 from general.lineup import *
-from general.color import *
 
 from scripts.roto import get_players as roto_get_players
 from scripts.roto_games import get_games as roto_get_games
@@ -188,19 +187,6 @@ def get_players(request):
 
     return JsonResponse(result, safe=False)
 
-
-def get_games_(pid, loc, opp, season):
-    player = Player.objects.get(id=pid)
-    q = Q(name='{} {}'.format(player.first_name, player.last_name)) \
-      & Q(team=player.team) \
-      & Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
-
-    if opp:
-        q &= Q(opp=opp)
-    if loc != 'all':
-        q &= Q(location=loc)
-
-    return PlayerGame.objects.filter(q).order_by('-date')
 
 
 def current_season():
