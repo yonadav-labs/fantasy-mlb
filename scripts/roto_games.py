@@ -14,7 +14,9 @@ from general.views import *
 from general import html2text
 
 def get_games(data_source):
-    slate = 'Main' if data_source == 'FanDuel' else 'all'
+    # slate = 'Main' if data_source == 'FanDuel' else 'all'
+    slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
+    slate = 'all'
     url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=MLB&' + \
           'site={}&type=main&slate={}'.format(data_source, slate)
 

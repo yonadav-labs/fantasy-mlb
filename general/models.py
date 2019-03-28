@@ -11,46 +11,6 @@ DATA_SOURCE = (
     ('Yahoo', 'Yahoo'),
 )
 
-POSITION = (
-    ('PG', 'PG'), 
-    ('SG', 'SG'), 
-    ('SF', 'SF'), 
-    ('PF', 'PF'), 
-    ('C', 'C')
-)
-
-TEAM = (
-    ('HOU', 'HOU'),
-    ('GS', 'GS'),
-    ('CHA', 'CHA'),
-    ('DEN', 'DEN'),
-    ('ATL', 'ATL'),
-    ('CLE', 'CLE'),
-    ('PHI', 'PHI'),
-    ('MIL', 'MIL'),
-    ('NO', 'NO'),
-    ('MIN', 'MIN'),
-    ('WAS', 'WAS'),
-    ('LAL', 'LAL'),
-    ('SA', 'SA'),
-    ('MIA', 'MIA'),
-    ('DET', 'DET'),
-    ('POR', 'POR'),
-    ('BOS', 'BOS'),
-    ('OKC', 'OKC'),
-    ('TOR', 'TOR'),
-    ('PHO', 'PHO'),
-    ('UTA', 'UTA'),
-    ('ORL', 'ORL'),
-    ('MEM', 'MEM'),
-    ('CHI', 'CHI'),
-    ('DAL', 'DAL'),
-    ('NY', 'NY'),
-    ('BKN', 'BKN'),
-    ('LAC', 'LAC'),
-    ('IND', 'IND'),
-    ('SAC', 'SAC')
-)
 
 def parse_name(name):
     # get first and last name from name string after processing
@@ -71,7 +31,7 @@ class Player(models.Model):
     opponent = models.CharField(max_length=50, blank=True, null=True)
     over_under = models.FloatField(default=0)
     point_spread = models.FloatField(default=0)
-    position = models.CharField(max_length=50, choices=POSITION)
+    position = models.CharField(max_length=50)
     actual_position = models.CharField(max_length=50)
     proj_ceiling = models.FloatField(default=0)
     proj_custom = models.FloatField(default=0)
@@ -85,11 +45,12 @@ class Player(models.Model):
     salary = models.FloatField()
     salary_custom = models.FloatField(default=0)
     salary_original = models.FloatField(default=0)
-    team = models.CharField(max_length=50, choices=TEAM)
+    team = models.CharField(max_length=50)
     team_points = models.FloatField(default=0)
     value = models.FloatField(default=0)
     play_today = models.BooleanField(default=False)
     lock_update = models.BooleanField(default=False)
+    opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
 
     rid = models.CharField(max_length=100, null=True, blank=True)
     data_source = models.CharField(max_length=30, choices=DATA_SOURCE, default='FanDuel')

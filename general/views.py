@@ -2,8 +2,9 @@
 from __future__ import unicode_literals
 import os
 import json
-import mimetypes
+import math
 import datetime
+import mimetypes
 from wsgiref.util import FileWrapper
 
 from django.shortcuts import render
@@ -21,12 +22,6 @@ from general.lineup import *
 
 from scripts.roto import get_players as roto_get_players
 from scripts.roto_games import get_games as roto_get_games
-
-CSV_FIELDS = {
-    'FanDuel': ['PG', 'PG', 'SG', 'SG', 'SF', 'SF', 'PF', 'PF', 'C'],
-    'DraftKings': ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'],
-    'Yahoo': ['PG', 'SG', 'G', 'SF', 'PF', 'F', 'C', 'UTIL']
-}
 
 
 def players(request):
@@ -100,7 +95,7 @@ def build_lineup(request):
         locked = [int(ii['player']) for ii in lineup if ii['player']]
         lineups = calc_lineups(players, num_lineups, locked, ds, cus_proj)
         if lineups:
-            roster = lineups[0].get_roster_players()
+            roster = lineups[0].get_players()
             lineup = [{ 'pos':ii, 'player': str(roster[idx].id) } for idx, ii in enumerate(CSV_FIELDS[ds])]
             request.session[key] = lineup
         else:
@@ -228,22 +223,6 @@ def get_player(full_name, team):
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
 
-
-def _get_lineups(request):
-    ids = request.POST.getlist('ids')
-    locked = request.POST.getlist('locked')
-    num_lineups = min(int(request.POST.get('num-lineups')), 150)
-    ds = request.POST.get('ds')
-
-    ids = [int(ii) for ii in ids]
-    locked = [int(ii) for ii in locked]
-
-    players = Player.objects.filter(id__in=ids)
-    cus_proj = request.session.get('cus_proj', {})
-    lineups = calc_lineups(players, num_lineups, locked, ds, cus_proj)
-    return lineups, players
-
-
 def get_num_lineups(player, lineups):
     num = 0
     for ii in lineups:
@@ -269,7 +248,7 @@ def gen_lineups(request):
     ds = request.POST.get('ds')
     header = CSV_FIELDS[ds] + ['Spent', 'Projected']
     
-    rows = [[[str(jj) for jj in ii.get_roster_players()]+[int(ii.spent()), ii.projected()], ii.drop]
+    rows = [[[str(jj) for jj in ii.get_players()]+[int(ii.spent()), ii.projected()], ii.drop]
             for ii in lineups]
 
     result = {
@@ -315,12 +294,12 @@ def export_lineups(request):
     lineups, _ = _get_lineups(request)
     ds = request.POST.get('ds')
     csv_fields = CSV_FIELDS[ds]
-    path = "/tmp/.fantasy_nba_{}.csv".format(ds.lower())
+    path = "/tmp/.fantasy_mlb_{}.csv".format(ds.lower())
 
     with open(path, 'w') as f:
         f.write(','.join(csv_fields)+'\n')
         for ii in lineups:
-            f.write(','.join([_get_export_cell(jj, ds) for jj in ii.get_roster_players()])+'\n')
+            f.write(','.join([_get_export_cell(jj, ds) for jj in ii.get_players()])+'\n')
     
     wrapper = FileWrapper( open( path, "r" ) )
     content_type = mimetypes.guess_type( path )[0]
@@ -334,7 +313,7 @@ def export_lineups(request):
 def export_manual_lineup(request):
     ds = request.session.get('ds')
     lidx = request.GET.getlist('lidx')
-    path = "/tmp/.fantasy_nba_{}.csv".format(ds.lower())
+    path = "/tmp/.fantasy_mlb_{}.csv".format(ds.lower())
     csv_fields = CSV_FIELDS[ds]
 
     with open(path, 'w') as f:
@@ -417,23 +396,26 @@ TEAM_MEMEBER_LIMIT = {
     'DraftKings': 6
 }
 
-def __get_lineups(request):
-    params = json.loads(request.body)
-    ids = params.get('ids')
-    locked = params.get('locked')
-    num_lineups = min(params.get('num_lineups', 1), 150)
+
+def _get_lineups(request):
+    params = request.POST
+    ids = params.getlist('ids')
+    locked = params.getlist('locked')
+    num_lineups = min(int(params.get('num-lineups', 1)), 150)
     ds = params.get('ds', 'DraftKings')
-    min_salary = params.get('min_salary', 0)
-    max_salary = params.get('max_salary', SALARY_CAP[ds])
-    min_team_member = params.get('min_team_member', 0)
-    max_team_member = params.get('max_team_member', TEAM_MEMEBER_LIMIT[ds])
+    min_salary = int(params.get('min_salary', 0))
+    max_salary = int(params.get('max_salary', SALARY_CAP[ds]))
+    min_team_member = int(params.get('min_team_member', 0))
+    max_team_member = int(params.get('max_team_member', TEAM_MEMEBER_LIMIT[ds]))
+
     exposure = params.get('exposure')
     team_stack = params.get('team_stack', {})
-    cus_proj = params.get('cus_proj', {})
+    cus_proj = request.session.get('cus_proj', {})
+    no_batter_vs_pitcher = params.get('no_batter_vs_pitcher', False)
 
     ids = [ii for ii in ids if ii]
-    flt = { ATTR[ds]['projection']+'__gt': 0, 'id__in': ids }
-    players = Player.objects.filter(**flt).order_by('-'+ATTR[ds]['projection'])
+    flt = { 'proj_points__gt': 0, 'id__in': ids, 'salary__gt': 0 }
+    players = Player.objects.filter(**flt).order_by('-proj_points')
 
     _team_stack = {}
     teams = players.values_list('team', flat=True).distinct()
@@ -449,52 +431,14 @@ def __get_lineups(request):
     _exposure = []
 
     for ii in players:
-        val = exposure.get(ii.id)
-        if not val:
-            continue
-
         _exposure.append({
-            'min': int(math.ceil(val['min'] * num_lineups)),
-            'max': int(math.floor(val['max'] * num_lineups)),
+            'min': int(math.ceil(float(params.get('min_xp_{}'.format(ii.id), 0)) * num_lineups)),
+            'max': int(math.floor(float(params.get('max_xp_{}'.format(ii.id), 0)) * num_lineups)),
             'id': ii.id
         })
 
-    return calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, _exposure, cus_proj)
-
-@csrf_exempt
-def gen_lineups_(request):
-    lineups = __get_lineups(request)
-
-    params = json.loads(request.body)
-    ds = params.get('ds')
-
-    header = CSV_FIELDS[ds] + ['Spent', 'Projected']
-    
-    lineups_ = []
-    for ii in lineups:
-        players = []
-        for jj in ii.get_players():
-            players.append({
-                'id': jj.id,
-                'name': jj.nickname,
-                'draftkings_name_id': jj.dk_id,
-                'avg_projection': getattr(jj, ATTR[ds]['projection']),
-                'position': getattr(jj, ATTR[ds]['position']),
-                'salary': getattr(jj, ATTR[ds]['salary']),
-                'team': jj.team,
-                'count': get_num_lineups(jj, lineups)
-            })
-
-        lineups_.append({ 
-            'players': players,
-            'salary': ii.spent(),
-            'projection': ii.projected()
-        })
-
-    result = {
-        'lineups': lineups_,
-        'ds': ds,
-        'total': len(lineups)
-    }
-
-    return JsonResponse(result, safe=False)
+    # import pdb
+    # pdb.set_trace()
+    lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
+        _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)
+    return lineups, players

@@ -5,8 +5,10 @@
       <th><input type="checkbox" id="chk-all" checked="" onclick="choose_all(this)"></th>
       <th colspan="2">Player</th>
       <th class="text-right sort-col" data-order="salary">Salary <i class="fas fa-sort-amount-down {% if order != 'salary' %} d-none {% endif %}"></i></th>
-      <th class="sort-col" data-order="proj_points">Projections <i class="fas fa-sort-amount-down {% if order != 'proj_points' %} d-none {% endif %}"></i></th>
-      <th class="sort-col" data-order="pt_sal" colspan="2">PT/Sal <i class="fas fa-sort-amount-down {% if order != 'pt_sal' %} d-none {% endif %}"></i></th>
+      <th class="sort-col" data-order="proj_points">Proj <i class="fas fa-sort-amount-down {% if order != 'proj_points' %} d-none {% endif %}"></i></th>
+      <th class="sort-col" data-order="pt_sal">PT/Sal <i class="fas fa-sort-amount-down {% if order != 'pt_sal' %} d-none {% endif %}"></i></th>
+      <th >Min Ex</th>
+      <th colspan="2">Max Ex</th>
     </tr>
   </thead>
   <tbody>
@@ -33,6 +35,12 @@
           <i class="fas fa-times" onclick="clear_proj(this);"></i>
         </td>
         <td class="pt-sal">{{ ii.pt_sal|floatformat:1 }}</td>
+        <td class="pl-3">
+          <input type="number" min="0" max="1" step="0.1" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0.0" name="min_xp_{{ ii.id }}">
+        </td>
+        <td class="pl-3">
+          <input type="number" min="0" max="1" step="0.1" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0.5" name="max_xp_{{ ii.id }}">
+        </td>
         <td>
           <i class="fas fa-lock-open fa-md lock unlocked plb-{{ ii.id }}" onclick="toggleLock(this, {{ ii.id }});"></i>
         </td>

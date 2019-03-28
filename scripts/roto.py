@@ -32,16 +32,15 @@ def _deviation_projection(val, salary, ds):
 
 def get_players(data_source):
     try:
+        slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
+        slate = 'all'
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
-              'site={}&projections=&type=main&slate=all'.format(data_source)
+              'site={}&projections=&type=main&slate={}'.format(data_source, slate)
 
         players = requests.get(url).json()
 
-        fields = ['minutes', 'money_line', 
-                  'over_under', 'point_spread', 'position', 'proj_ceiling', 'opponent',
-                  'proj_custom', 'proj_floor', 'proj_original', 'proj_rotowire', 
-                  'proj_site', 'proj_third_party_one', 'proj_third_party_two', 'actual_position', 
-                  'salary', 'salary_custom', 'salary_original', 'team', 'team_points', 'value']
+        fields = ['money_line', 'position', 'proj_ceiling', 'opponent', 'actual_position', 
+                  'salary', 'team', 'opp_pitcher_id']
 
         print data_source, len(players)
         if len(players) > 20:

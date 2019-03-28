@@ -2,7 +2,7 @@ import operator as op
 from ortools.linear_solver import pywraplp
 from .models import *
 
-
+import pdb
 class Roster:
     POSITION_ORDER = {
         "P": 0,
@@ -17,6 +17,7 @@ class Roster:
     def __init__(self, ds):
         self.players = []
         self.ds = ds
+        self.drop = None
 
     def add_player(self, player):
         self.players.append(player)
@@ -29,10 +30,10 @@ class Roster:
         return player.id in [ii.id for ii in self.players]
 
     def spent(self):
-        return sum(map(lambda x: getattr(x, ATTR[self.ds]['salary']), self.players))
+        return sum(map(lambda x: getattr(x, 'salary'), self.players))
 
     def projected(self):
-        return sum(map(lambda x: getattr(x, ATTR[self.ds]['projection']), self.players))
+        return sum(map(lambda x: getattr(x, 'proj_points'), self.players))
 
     def position_order(self, player):
         return self.POSITION_ORDER[player.position]
@@ -110,15 +111,15 @@ def get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_sal
     objective.SetMaximization()
 
     for i, player in enumerate(players):
-        objective.SetCoefficient(variables[i], float(getattr(player, ATTR[ds]['projection'])))
+        objective.SetCoefficient(variables[i], player.proj_points)
 
     salary_cap = solver.Constraint(min_salary, max_salary)
     for i, player in enumerate(players):
-        salary_cap.SetCoefficient(variables[i], int(getattr(player, ATTR[ds]['salary'])))
+        salary_cap.SetCoefficient(variables[i], player.salary)
 
     point_cap = solver.Constraint(0, max_point)
     for i, player in enumerate(players):
-        point_cap.SetCoefficient(variables[i], float(getattr(player, ATTR[ds]['projection'])))
+        point_cap.SetCoefficient(variables[i], player.proj_points)
 
     position_limits = POSITION_LIMITS[ds]
     for position, min_limit, max_limit in position_limits:
@@ -173,7 +174,14 @@ def get_num_lineups(player, lineups):
 def get_exposure(players, lineups):
     return { ii.id: get_num_lineups(ii, lineups) for ii in players }
 
-def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, exposure, cus_proj):
+def check_batter_vs_pitcher(roster):
+    opposing_pitchers = [ii.opposing_pitcher for ii in roster.get_players()]
+    for ii in roster.get_players():
+        if ii.position == 'P' and ii.nickname in opposing_pitchers:
+            return False
+    return True
+
+def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, exposure, cus_proj, no_batter_vs_pitcher):
     result = []
     max_point = 10000
     exposure_d = { ii['id']: ii for ii in exposure }
@@ -182,19 +190,17 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
     players_ = []
     idx = 0
     for ii in players:
-        position = getattr(ii, ATTR[ds]['position'])
-        if position and position != "0":
-            p = vars(ii)
-            p.pop('_state')
-            p[ATTR[ds]['projection']] = float(cus_proj.get(str(ii.id), p[ATTR[ds]['projection']]))
-            ci_ = []
+        p = vars(ii)
+        p.pop('_state')
+        p['proj_points'] = float(cus_proj.get(str(ii.id), ii.proj_points))
+        ci_ = []
 
-            for jj in position.split('/'):
-                ci_.append(idx)
-                p['position'] = jj
-                players_.append(Player(**p))
-                idx += 1
-            con_mul.append(ci_)
+        for jj in ii.actual_position.split('/'):
+            ci_.append(idx)
+            p['position'] = jj if jj != 'SP' else 'P'
+            players_.append(Player(**p))
+            idx += 1
+        con_mul.append(ci_)
     players = players_
 
     ban = []
@@ -223,9 +229,10 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
 
                 max_point = float(roster.projected()) - 0.001
                 if roster.get_num_teams() >= TEAM_LIMIT[ds]:
-                    result.append(roster)
-                    if len(result) == num_lineups:
-                        return result
+                    if not no_batter_vs_pitcher or check_batter_vs_pitcher(roster):
+                        result.append(roster)
+                        if len(result) == num_lineups:
+                            return result
 
     # for max exposure -> focus on getting optimized lineups
     while True:
@@ -241,6 +248,7 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
 
         max_point = float(roster.projected()) - 0.001
         if roster.get_num_teams() >= TEAM_LIMIT[ds]:
-            result.append(roster)
-            if len(result) == num_lineups:
-                return result
+            if not no_batter_vs_pitcher or check_batter_vs_pitcher(roster):
+                result.append(roster)
+                if len(result) == num_lineups:
+                    return result
