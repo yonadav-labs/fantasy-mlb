@@ -197,7 +197,7 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
 
         for jj in ii.actual_position.split('/'):
             ci_.append(idx)
-            p['position'] = jj if jj != 'SP' else 'P'
+            p['position'] = 'P' if jj == 'SP' else 'C' if jj == 'C1' else jj
             players_.append(Player(**p))
             idx += 1
         con_mul.append(ci_)

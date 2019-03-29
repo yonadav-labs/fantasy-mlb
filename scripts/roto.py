@@ -34,6 +34,8 @@ def get_players(data_source):
     try:
         slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
         slate = 'all'
+        slate = 'Main' if data_source == 'FanDuel' else 'all'
+
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
               'site={}&projections=&type=main&slate={}'.format(data_source, slate)
 
