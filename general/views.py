@@ -383,7 +383,7 @@ def get_slates(request):
 
 CSV_FIELDS = {
     'FanDuel': ['P', 'C1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF', 'UTIL'],
-    'DraftKings': ['P', 'P', 'C' '1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF'],
+    'DraftKings': ['P', 'P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF'],
 }
 
 SALARY_CAP = {
