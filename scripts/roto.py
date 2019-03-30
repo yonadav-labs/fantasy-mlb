@@ -53,7 +53,7 @@ def get_players(data_source):
                 defaults['play_today'] = True
 
                 defaults['start'] = ' ' if ii['lineup_status'] == 'Yes' else ii['lineup_status']
-                defaults['handedness'] = html2text.html2text(ii['handedness']).strip()
+                defaults['handedness'] = html2text.html2text(ii['handedness']).strip().replace('B', 'S')
                 defaults['start_status'] = html2text.html2text(ii['team_lineup_status']).strip().replace('E', 'P')
                 defaults['injury'] = html2text.html2text(ii['injury']).strip()
 

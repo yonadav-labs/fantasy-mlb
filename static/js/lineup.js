@@ -56,13 +56,15 @@ $(function() {
     var position = $('.position-filter .nav-item a.active').html(),
         keyword = $('#search-player').val().toLowerCase().trim();    
 
-    if (position == 'All') {
-      position = '';
+    if (position == 'H') {
+      $("#div-players tr").filter(function() {
+        $(this).toggle($(this).find('td:nth-child(2)').text().indexOf('P') == -1 && $(this).find('td:nth-child(3)').text().toLowerCase().indexOf(keyword) > -1)
+      });
+    } else {
+      $("#div-players tr").filter(function() {
+        $(this).toggle($(this).find('td:nth-child(2)').text().indexOf(position) > -1 && $(this).find('td:nth-child(3)').text().toLowerCase().indexOf(keyword) > -1)
+      });      
     }
-
-    $("#div-players tr").filter(function() {
-      $(this).toggle($(this).find('td:nth-child(2)').text().indexOf(position) > -1 && $(this).find('td:nth-child(3)').text().toLowerCase().indexOf(keyword) > -1)
-    });
 
     $("#div-players thead tr").filter(function() {
       $(this).toggle(true);
