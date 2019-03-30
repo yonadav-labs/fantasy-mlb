@@ -38,7 +38,7 @@ class Player(models.Model):
     proj_floor = models.FloatField(default=0)
     proj_original = models.FloatField(default=0)
     proj_points = models.FloatField()
-    proj_rotowire = models.FloatField(default=0)
+    proj_rotowire = models.FloatField(default=0)    # use as the deviation
     proj_site = models.FloatField(default=0)
     proj_third_party_one = models.FloatField(default=0)
     proj_third_party_two = models.FloatField(default=0)

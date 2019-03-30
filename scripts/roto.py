@@ -13,22 +13,22 @@ django.setup()
 from general.models import *
 from general import html2text
 
-def _deviation_projection(val, salary, ds):
-    TC = {
-        'DraftKings': (9000, 3900),
-        'FanDuel': (9600, 4000),
-        'Yahoo': (38, 0)
-    }
-
-    tc = TC[ds]
-    if salary >= tc[0]:
-        factor = (25, 50)
-    elif salary >= tc[1]:
-        factor = (5, 25)
+def _deviation_projection(val, position, ds, uid):
+    player = Player.objects.filter(data_source='DraftKings', uid=uid).first()
+    if ds == 'DraftKings':
+        if not val:
+            factor = (0, 1)
+        elif 'P' in position:
+            factor = (3, 20)
+        else:
+            factor = (1, 9)        
+        delta = random.randrange(factor[0], factor[1]) / 10.0
+        if player:
+            player.proj_rotowire = delta
+            player.save()
     else:
-        factor = (2, 10)
-
-    return float(val) + random.randrange(factor[0], factor[1]) / 10.0
+        delta = player.proj_rotowire if player else 0
+    return float(val) + delta
 
 def get_players(data_source):
     try:
@@ -61,7 +61,7 @@ def get_players(data_source):
                 if not player:
                     defaults['uid'] = ii['id']
                     defaults['data_source'] = data_source
-                    defaults['proj_points'] = _deviation_projection(ii['proj_points'], ii['salary'], data_source)
+                    defaults['proj_points'] = _deviation_projection(ii['proj_points'], ii['position'], data_source, ii['id'])
                     defaults['first_name'] = ii['first_name'].replace('.', '')
                     defaults['last_name'] = ii['last_name'].replace('.', '')
         
@@ -72,7 +72,7 @@ def get_players(data_source):
                     else:
                         criteria = datetime.datetime.combine(datetime.date.today(), datetime.time(22, 30, 0)) # utc time - 5:30 pm EST
                         if player.updated_at.replace(tzinfo=None) < criteria:
-                            defaults['proj_points'] = _deviation_projection(ii['proj_points'], ii['salary'], data_source)
+                            defaults['proj_points'] = _deviation_projection(ii['proj_points'], ii['position'], data_source, ii['id'])
 
                         for attr, value in defaults.items():
                             setattr(player, attr, value)
@@ -81,5 +81,5 @@ def get_players(data_source):
         print("*** some thing is wrong ***")
 
 if __name__ == "__main__":
-    for ds in ['DraftKings', 'Yahoo', 'FanDuel']:
+    for ds in ['DraftKings', 'FanDuel']:
         get_players(ds)
