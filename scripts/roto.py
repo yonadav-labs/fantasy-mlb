@@ -33,8 +33,8 @@ def _deviation_projection(val, salary, ds):
 def get_players(data_source):
     try:
         slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
-        slate = 'all'
         slate = 'Main' if data_source == 'FanDuel' else 'all'
+        slate = 'all'
 
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
               'site={}&projections=&type=main&slate={}'.format(data_source, slate)
@@ -51,6 +51,10 @@ def get_players(data_source):
             for ii in players:
                 defaults = { key: str(ii[key]).replace(',', '') for key in fields }
                 defaults['play_today'] = True
+
+                defaults['start'] = ' ' if ii['lineup_status'] == 'Yes' else ii['lineup_status']
+                defaults['handedness'] = html2text.html2text(ii['handedness']).strip()
+                defaults['start_status'] = html2text.html2text(ii['team_lineup_status']).strip().replace('E', 'P')
                 defaults['injury'] = html2text.html2text(ii['injury']).strip()
 
                 player = Player.objects.filter(uid=ii['id'], data_source=data_source).first()

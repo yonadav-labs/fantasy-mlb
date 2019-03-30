@@ -52,6 +52,10 @@ class Player(models.Model):
     lock_update = models.BooleanField(default=False)
     opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
 
+    handedness = models.CharField(max_length=5, blank=True, null=True)
+    start = models.CharField(max_length=5, blank=True, null=True)
+    start_status = models.CharField(max_length=5, blank=True, null=True)
+
     rid = models.CharField(max_length=100, null=True, blank=True)
     data_source = models.CharField(max_length=30, choices=DATA_SOURCE, default='FanDuel')
     created_at = models.DateTimeField(auto_now_add=True)
