@@ -31,7 +31,7 @@ $(function() {
     if (e) {
       e.preventDefault();
     }
-    var num_players = $('input[type="checkbox"]:checked').length;
+    var num_players = $('#div-players input[type="checkbox"]:checked').length;
     if (num_players == 0) {
       alert('Please choose players.');
       return false;
@@ -114,7 +114,7 @@ function build_lineup(pid) {
     pid: pid,
     ds: ds,
     idx: bid.replace('collapse_', ''),
-    ids: $('#frm-player').serialize()
+    ids: $('#div-players input[type="checkbox"]:checked').serialize()
   }, function( data ) {
     $("#"+bid).html(data.html);
     $('.fas.lock').removeClass('fa-lock');
@@ -172,7 +172,7 @@ function pr_click(obj) {
 }
 
 function choose_all (obj) {
-  $('input[type="checkbox"]').prop("checked", $(obj).prop('checked'));
+  $('#div-players input[type="checkbox"]').prop("checked", $(obj).prop('checked'));
 }
 
 function change_point (obj, clear) {

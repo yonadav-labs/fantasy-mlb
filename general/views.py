@@ -93,8 +93,13 @@ def build_lineup(request):
         players = Player.objects.filter(id__in=ids)
         num_lineups = 1
         locked = [int(ii['player']) for ii in lineup if ii['player']]
-        lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
-                               _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)
+
+        teams = players.values_list('team', flat=True).distinct()
+        _team_stack = {ii: { 'min': 0, 'max': TEAM_MEMEBER_LIMIT[ds] } for ii in teams if ii}
+        _exposure = [{ 'min': 0, 'max': 1, 'id': ii.id } for ii in players]
+
+        lineups = calc_lineups(players, num_lineups, locked, ds, 0, SALARY_CAP[ds], 
+                               _team_stack, _exposure, cus_proj, False)
         if lineups:
             roster = lineups[0].get_players()
             lineup = [{ 'pos':ii, 'player': str(roster[idx].id) } for idx, ii in enumerate(CSV_FIELDS[ds])]
