@@ -93,7 +93,8 @@ def build_lineup(request):
         players = Player.objects.filter(id__in=ids)
         num_lineups = 1
         locked = [int(ii['player']) for ii in lineup if ii['player']]
-        lineups = calc_lineups(players, num_lineups, locked, ds, cus_proj)
+        lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
+                               _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)
         if lineups:
             roster = lineups[0].get_players()
             lineup = [{ 'pos':ii, 'player': str(roster[idx].id) } for idx, ii in enumerate(CSV_FIELDS[ds])]
@@ -113,7 +114,8 @@ def build_lineup(request):
         if SALARY_CAP[ds] >= sum_salary + player.salary:
             for ii in lineup:
                 if not ii['player']:
-                    if ii['pos'] == 'UTIL' or ii['pos'] in player.actual_position:
+                    pos = ii['pos'].replace('C1B', 'C')
+                    if (player.actual_position != 'P' and pos == 'UTIL') or pos in player.actual_position:
                         available = True
                         ii['player'] = pid
                         break
@@ -171,6 +173,8 @@ def get_players(request):
         player = model_to_dict(ii, fields=['id', 'injury', 'avatar', 'salary', 'team',
                                            'actual_position', 'first_name', 'last_name',
                                            'handedness', 'start', 'start_status'])
+        if ds == 'FanDuel' and ii.actual_position == 'C':
+            player['actual_position'] = 'C/1B'
         player['proj_points'] = float(cus_proj.get(str(ii.id), ii.proj_points))
         player['pt_sal'] = player['proj_points'] * factor / ii.salary if ii.salary else 0
         players.append(player)
@@ -432,13 +436,11 @@ def _get_lineups(request):
 
     for ii in players:
         _exposure.append({
-            'min': int(math.ceil(float(params.get('min_xp_{}'.format(ii.id), 0)) * num_lineups)),
-            'max': int(math.floor(float(params.get('max_xp_{}'.format(ii.id), 0)) * num_lineups)),
+            'min': int(math.ceil(float(params.get('min_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
+            'max': int(math.floor(float(params.get('max_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
             'id': ii.id
         })
 
-    # import pdb
-    # pdb.set_trace()
     lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
         _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)
     return lineups, players

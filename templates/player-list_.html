@@ -7,18 +7,18 @@
       <th class="text-right sort-col" data-order="salary">Salary <i class="fas fa-sort-amount-down {% if order != 'salary' %} d-none {% endif %}"></i></th>
       <th class="sort-col" data-order="proj_points">Proj <i class="fas fa-sort-amount-down {% if order != 'proj_points' %} d-none {% endif %}"></i></th>
       <th class="sort-col" data-order="pt_sal">PT/Sal <i class="fas fa-sort-amount-down {% if order != 'pt_sal' %} d-none {% endif %}"></i></th>
-      <th >Min Ex</th>
-      <th colspan="2">Max Ex</th>
+      <th >Min %</th>
+      <th colspan="2">Max %</th>
     </tr>
   </thead>
   <tbody>
     {% for ii in players %}
       <tr class="{{ ii|cus_proj_cls:request.session }}">
         <td><input type="checkbox" name="ids" {% if not ii.injury and ii.start %} checked="" {% endif %} value="{{ ii.id }}"></td>
-        <td style="cursor: pointer;" onclick="pr_click(this)">
-          <img src="{{ ii.avatar }}" height="30" class="mr-2"> {{ ii.actual_position }}
+        <td style="cursor: pointer;" class="px-0" onclick="pr_click(this)">
+          <img src="{{ ii.avatar }}" height="30" class="mr-0"> {{ ii.actual_position }}
         </td>
-        <td>
+        <td class="pl-2 pr-0">
           <a href="#/players/{{ ii.id }}">
             <div>
               <span>{{ ii.first_name }} {{ ii.last_name }}</span>
@@ -26,7 +26,7 @@
                 <span class="text-danger font-weight-bold ml-3">{{ ii.injury }}</span>
               {% endif %}
             </div>
-            <div class="sub">{{ ii.team }} {{ ii.handedness }} {{ ii.start }} <i class="fas fa-check {% if not ii.start_status %} text-success {% else %} text-muted {% endif %}"></i></div>
+            <div class="sub">{{ ii.team }} {{ ii.handedness }} {{ ii.start }} {% if ii.start and not ii.start_status %}<i class="fas fa-check text-success"></i>{% endif %}</div>
           </a>
         </td>
         <td class="text-right pr-3">{% if ds != 'Yahoo' %}${% endif %}{{ ii.salary|floatformat:0 }}</td>
@@ -36,10 +36,10 @@
         </td>
         <td class="pt-sal">{{ ii.pt_sal|floatformat:1 }}</td>
         <td class="pl-3">
-          <input type="number" min="0" max="1" step="0.1" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0.0" name="min_xp_{{ ii.id }}">
+          <input type="number" min="0" max="100" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0" name="min_xp_{{ ii.id }}">
         </td>
         <td class="pl-3">
-          <input type="number" min="0" max="1" step="0.1" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0.5" name="max_xp_{{ ii.id }}">
+          <input type="number" min="0" max="100" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="40" name="max_xp_{{ ii.id }}">
         </td>
         <td>
           <i class="fas fa-lock-open fa-md lock unlocked plb-{{ ii.id }}" onclick="toggleLock(this, {{ ii.id }});"></i>

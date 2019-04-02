@@ -7,9 +7,9 @@ from general.models import *
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'uid', 'position', 'actual_position', 'team', 'opponent', 'salary', 'play_today', 
-                    'proj_points', 'data_source', 'updated_at', 'created_at', 'avatar']
+                    'proj_points', 'proj_delta', 'data_source', 'updated_at', 'created_at', 'avatar']
     search_fields = ['first_name', 'last_name', 'team']
-    list_filter = ['team', 'data_source', 'position', 'actual_position', 'play_today']
+    list_filter = ['team', 'data_source', 'position', 'play_today']
     save_as = True
 
 
@@ -29,4 +29,3 @@ class GameAdmin(admin.ModelAdmin):
 
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Game, GameAdmin)
-# admin.site.register(PlayerGame, PlayerGameAdmin)

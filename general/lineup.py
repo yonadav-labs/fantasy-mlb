@@ -45,7 +45,7 @@ class Roster:
         if self.ds == 'DraftKings': 
             return self.sorted_players()
         else:
-            pos = ['P', 'C,1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF']
+            pos = ['P', 'C', '2B', '3B', 'SS', 'OF', 'OF', 'OF']
             players = list(self.players)
             players_ = []
 
@@ -67,7 +67,7 @@ class Roster:
 POSITION_LIMITS = {
     'FanDuel': [
         ["P", 1, 1],
-        ["C,2B,3B", 1, 2],
+        ["C", 1, 2],
         ["2B", 1, 2],
         ["3B", 1, 2],
         ["SS", 1, 2],
@@ -197,7 +197,7 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
 
         for jj in ii.actual_position.split('/'):
             ci_.append(idx)
-            p['position'] = 'P' if jj == 'SP' else 'C' if jj == 'C1' else jj
+            p['position'] = 'P' if 'P' in jj else jj
             players_.append(Player(**p))
             idx += 1
         con_mul.append(ci_)

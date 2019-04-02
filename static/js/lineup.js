@@ -11,6 +11,14 @@ $(function() {
   $('.nav-tabs.ds .nav-link').click(function () {
     ds = $(this).text();
     $('#ds').val(ds);
+
+    if (ds == 'FanDuel') {
+      $('li.cb-fd a').text('C/1B');
+      $('li.tg-fd').hide();
+    } else {
+      $('li.cb-fd a').text('C');
+      $('li.tg-fd').show();
+    }
     getGames();
     // remove locked and clear search
     $('input[name=locked]').remove();
