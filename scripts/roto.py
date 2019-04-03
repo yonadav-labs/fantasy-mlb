@@ -21,12 +21,12 @@ def get_delta(ii, ds):
     else:
         factor = (1, 9)
     sign = 1 if random.randrange(0, 2) else -1
-    delta = random.randrange(factor[0], factor[1]) / 10.0 * sign
+    delta = random.randrange(factor[0], factor[1]) / 10.0
 
     if ds != 'DraftKings':
         player = Player.objects.filter(data_source='DraftKings', uid=ii['id']).first()
-        delta = player.proj_delta if player else delta
-    return delta
+        sign = 1 if player and player.proj_delta > 0 else -1
+    return delta * sign
 
 def get_players(data_source):
     try:

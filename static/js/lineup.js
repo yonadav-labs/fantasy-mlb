@@ -61,10 +61,10 @@ $(function() {
   });
 
   filterTable = function () {
-    var position = $('.position-filter .nav-item a.active').html(),
+    var position = $('.position-filter .nav-item a.active').html().replace('Pitchers', 'P'),
         keyword = $('#search-player').val().toLowerCase().trim();    
 
-    if (position == 'H') {
+    if (position == 'Hitters') {
       $("#div-players tr").filter(function() {
         $(this).toggle($(this).find('td:nth-child(2)').text().indexOf('P') == -1 && $(this).find('td:nth-child(3)').text().toLowerCase().indexOf(keyword) > -1)
       });

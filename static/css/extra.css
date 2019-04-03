@@ -354,7 +354,7 @@ table th {
     height: 32px;
     font-size: 0.94rem;
     font-weight: 600;
-    padding-top: 5px;
+    padding: 5px 0 0;
 }
 
 .filters label {
