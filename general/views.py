@@ -160,6 +160,7 @@ def build_lineup(request):
 
     return JsonResponse(result, safe=False)
 
+
 @csrf_exempt
 def get_players(request):
     ds = request.POST.get('ds')

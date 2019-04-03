@@ -20,6 +20,7 @@ def parse_name(name):
         return name_[0], ' '.join(name_[1:])
     return name, ''
 
+
 class Player(models.Model):
     uid = models.IntegerField()
     first_name = models.CharField(max_length=50)
