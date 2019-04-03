@@ -8,11 +8,10 @@
     </tr>
     <tr>
       <th><input type="checkbox" id="chk-all" checked="" onclick="choose_all(this)"></th>
-      <th colspan="2">
-        <span class="pl-3" title="Position">Pos</span>
-        <span class="pl-3 pr-1" title="Team">Tm</span>
-        <span class="p-1" title="Handedness">Hand</span>
-        <span class="p-1" title="Order">Order</span>
+      <th><span class="pl-3" title="Position">Pos</span></th>
+      <th>
+        <span class="pl-0" title="Team">Tm</span>
+        <span class="p-1" title="Order">Ord</span>
       </th>
       <th class="text-center px-0 sort-col" data-order="salary">Salary <i class="fas fa-sort-amount-down {% if order != 'salary' %} d-none {% endif %}"></i></th>
       <th class="text-center px-0 sort-col" data-order="proj_points">Proj <i class="fas fa-sort-amount-down {% if order != 'proj_points' %} d-none {% endif %}"></i></th>
