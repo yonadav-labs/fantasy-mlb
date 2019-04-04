@@ -168,6 +168,8 @@ def get_players(request):
     if order == '-':
         order = 'proj_points'
 
+    reverse = False if '-' in order else True
+    order = order.replace('-', '')
     teams = request.POST.get('games').strip(';').replace(';', '-').split('-')
 
     factor = 1 if ds == 'Yahoo' else 1000
@@ -185,7 +187,7 @@ def get_players(request):
         player['pt_sal'] = player['proj_points'] * factor / ii.salary if ii.salary else 0
         players.append(player)
 
-    players = sorted(players, key=lambda k: k[order], reverse=True)
+    players = sorted(players, key=lambda k: k[order], reverse=reverse)
     result = { 
         'html': render_to_string('player-list_.html', locals()),
         'num_lineups': request.session.get(ds+'_num_lineups', 1),

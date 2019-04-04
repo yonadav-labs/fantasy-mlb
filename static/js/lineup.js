@@ -1,5 +1,6 @@
 var ds = 'DraftKings',
-    bid = '';
+    bid = '',
+    sort_dir = 1;
 
 $(function() {
   // when change slate
@@ -95,8 +96,17 @@ $(function() {
   });
 
   // sort
-  $('#div-players').on('click', 'th.sort-col', function() {
-    getPlayers($(this).data('order'));
+  $('#div-players').on('click', '.sort-col', function() {
+    var order = $(this).data('order');
+    if ($(this).data('bidirection')) {
+      sort_dir *= -1;
+      if (sort_dir < 0) {
+        order = '-' + order;
+      }
+    } else {
+      sort_dir = 1;
+    }
+    getPlayers(order);
   })
 })
 
