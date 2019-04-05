@@ -61,6 +61,10 @@ $(function() {
     $('#div-result').html('');
   });
 
+  setExposure = function () {
+    $('#dlg-exposure').modal();
+  }
+
   filterTable = function () {
     var position = $('.position-filter .nav-item a.active').html().replace('Pitchers', 'P'),
         keyword = $('#search-player').val().toLowerCase().trim();    

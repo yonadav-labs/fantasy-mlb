@@ -412,7 +412,7 @@ TEAM_MEMEBER_LIMIT = {
 def _get_lineups(request):
     params = request.POST
     ids = params.getlist('ids')
-    locked = params.getlist('locked')
+    locked = [int(ii) for ii in params.getlist('locked')]
     num_lineups = min(int(params.get('num-lineups', 1)), 150)
     ds = params.get('ds', 'DraftKings')
     min_salary = int(params.get('min_salary', 0))
@@ -443,11 +443,14 @@ def _get_lineups(request):
     _exposure = []
 
     for ii in players:
-        _exposure.append({
-            'min': int(math.ceil(float(params.get('min_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
-            'max': int(math.floor(float(params.get('max_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
-            'id': ii.id
-        })
+        if ii.id in locked:
+            _exposure.append({ 'min': num_lineups, 'max': num_lineups, 'id': ii.id })
+        else:
+            _exposure.append({
+                'min': int(math.ceil(float(params.get('min_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
+                'max': int(math.floor(float(params.get('max_xp_{}'.format(ii.id), 0)) * num_lineups / 100)),
+                'id': ii.id
+            })
 
     lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
         _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)

@@ -273,7 +273,7 @@ table th {
     display: block;
 }
 
-.fas.lock {
+.fas.lock, .fas.fa-cog {
     cursor: pointer;
 }
 
