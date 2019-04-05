@@ -45,10 +45,10 @@
         </td>
         <td class="pt-sal">{{ ii.pt_sal|floatformat:1 }}</td>
         <td class="pl-3">
-          <input type="number" min="0" max="100" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0" name="min_xp_{{ ii.id }}">
+          <input type="number" min="0" max="100" class="form-control min-exp d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="0" name="min_xp_{{ ii.id }}">
         </td>
         <td class="pl-3">
-          <input type="number" min="0" max="100" class="form-control d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="40" name="max_xp_{{ ii.id }}">
+          <input type="number" min="0" max="100" class="form-control max-exp d-inline text-right pl-0 pr-1 _wu48jf" data-id="{{ ii.id }}" value="40" name="max_xp_{{ ii.id }}">
         </td>
         <td>
           <i class="fas fa-lock-open fa-md lock unlocked plb-{{ ii.id }}" onclick="toggleLock(this, {{ ii.id }});"></i>
