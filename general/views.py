@@ -452,6 +452,17 @@ def _get_lineups(request):
                 'id': ii.id
             })
 
+    # check validity of exposure for minimal
+    while True:
+        possible_players = 0
+        for ii in _exposure:
+            possible_players += ii['max']
+        if possible_players < ROSTER_SIZE[ds] * num_lineups:
+            for ii in _exposure:
+                ii['max'] = ii['max'] + 1
+        else:
+            break
+
     lineups = calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, 
         _team_stack, _exposure, cus_proj, no_batter_vs_pitcher)
     return lineups, players
