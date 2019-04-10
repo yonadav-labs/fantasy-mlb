@@ -99,7 +99,7 @@ def build_lineup(request):
         _exposure = [{ 'min': 0, 'max': 1, 'id': ii.id } for ii in players]
 
         lineups = calc_lineups(players, num_lineups, locked, ds, 0, SALARY_CAP[ds], 
-                               _team_stack, _exposure, cus_proj, False)
+                               _team_stack, _exposure, cus_proj, True)
         if lineups:
             roster = lineups[0].get_players()
             lineup = [{ 'pos':ii, 'player': str(roster[idx].id) } for idx, ii in enumerate(CSV_FIELDS[ds])]
@@ -423,7 +423,7 @@ def _get_lineups(request):
     exposure = params.get('exposure')
     team_stack = params.get('team_stack', {})
     cus_proj = request.session.get('cus_proj', {})
-    no_batter_vs_pitcher = params.get('no_batter_vs_pitcher', False)
+    no_batter_vs_pitcher = params.get('no_batter_vs_pitcher', True)
 
     ids = [ii for ii in ids if ii]
     flt = { 'proj_points__gt': 0, 'id__in': ids, 'salary__gt': 0 }

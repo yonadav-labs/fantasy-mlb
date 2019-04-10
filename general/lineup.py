@@ -175,9 +175,9 @@ def get_exposure(players, lineups):
     return { ii.id: get_num_lineups(ii, lineups) for ii in players }
 
 def check_batter_vs_pitcher(roster):
-    opposing_pitchers = [ii.opposing_pitcher for ii in roster.get_players()]
-    for ii in roster.get_players():
-        if ii.position == 'P' and ii.nickname in opposing_pitchers:
+    opp_pitcher_ids = [ii.opp_pitcher_id for ii in roster.players if ii.opp_pitcher_id]
+    for ii in roster.players:
+        if ii.position == 'P' and ii.uid in opp_pitcher_ids:
             return False
     return True
 
