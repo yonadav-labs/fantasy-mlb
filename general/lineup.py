@@ -129,14 +129,13 @@ def get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_sal
             if player.position in position:
                 position_cap.SetCoefficient(variables[i], 1)
 
-    # no more than n players from one team (team stack)
+    # no more than n players from one team (team stack - only for hitters)
     teams = _team_stack.keys()
     for team in teams:
-        if _team_stack[team]['max'] != ROSTER_SIZE[ds]:
-            team_cap = solver.Constraint(_team_stack[team]['min'], _team_stack[team]['max'])
-            for i, player in enumerate(players):
-                if team == player.team:
-                    team_cap.SetCoefficient(variables[i], 1)
+        team_cap = solver.Constraint(_team_stack[team]['min'], _team_stack[team]['max'])
+        for i, player in enumerate(players):
+            if team == player.team and player.position != 'P':
+                team_cap.SetCoefficient(variables[i], 1)
 
     if ds == 'DraftKings':    # multi positional constraints
         for ii in con_mul:

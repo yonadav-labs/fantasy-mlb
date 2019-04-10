@@ -404,8 +404,8 @@ SALARY_CAP = {
 }
 
 TEAM_MEMEBER_LIMIT = {
-    'FanDuel': 5,
-    'DraftKings': 6
+    'FanDuel': 4,
+    'DraftKings': 5
 }
 
 
