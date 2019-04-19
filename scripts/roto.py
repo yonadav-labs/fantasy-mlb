@@ -32,7 +32,7 @@ def get_players(data_source):
     try:
         slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
         slate = 'Main' if data_source == 'FanDuel' else 'all'
-        slate = 'all'
+        # slate = 'all'
 
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
               'site={}&projections=&type=main&slate={}'.format(data_source, slate)
@@ -44,7 +44,7 @@ def get_players(data_source):
 
         print data_source, len(players)
         if len(players) > 20:
-            Player.objects.filter(data_source=data_source).update(play_today=False)
+            Player.objects.filter(data_source=data_source, lock_update=False).update(play_today=False)
 
             for ii in players:
                 ii['position'] = ii['position'].replace('C1', 'C')
