@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% load extra %}
 
+{% block css %}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/static/css/slider.css">
+{% endblock %}
+
 {% block content %}
 <div class="container-iframe pt-3 mt-3 mb-3 lineups-container">
   <form id="frm-player" action="/export_lineups" method="POST" onkeypress="return event.keyCode != 13;">
@@ -21,6 +26,9 @@
             <a class="nav-link" data-toggle="tab" href="#home">{{ ds.0 }}</a>
           </li>
           {% endfor %}
+          <li class="pt-2 ml-5">
+            Team stack <i class="fas fa-cog text-muted ml-1" onclick="setTeamStack();"></i>
+          </li>
         </ul>
         <div class="tab-content players-pane p-2">
           <ul class="nav nav-pills position-filter p-2">
@@ -125,9 +133,27 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="dlg-team-stack">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Team Stack Setting</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success btn-set-exp" data-dismiss="modal">Ok</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>  
 {% endblock %}
 
 {% block script %}
   <script src="/static/js/lineup.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% endblock %}

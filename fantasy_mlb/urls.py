@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^tool', put_ids, name="put_ids"),
     url(r'^trigger-scraper', trigger_scraper, name="trigger_scraper"),
     url(r'^update-point', update_point, name="update_point"),
+    url(r'^get-team-stack-dlg/(?P<ds>.+)', get_team_stack_dlg, name="get_team_stack_dlg"),
 ]

@@ -83,6 +83,28 @@ $(function() {
     $('#dlg-exposure').modal();
   }
 
+  setTeamStack = function () {
+    $.get('/get-team-stack-dlg/'+ds, {}, function(data) {
+      $('#dlg-team-stack .modal-body').html(data);
+
+      $( "#dlg-team-stack .slider-range" ).slider({
+        range: true,
+        min: 1,
+        step: 1,
+        max: 5,
+        values: [ 1, 5 ],
+        change: function( event, ui ) {
+          // loadBoard();
+        },
+        slide: function( event, ui ) {
+          // $(this).parent().find('.slider-val').val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
+        }
+      });
+
+      $('#dlg-team-stack').modal();
+    })
+  }
+
   filterTable = function () {
     var position = $('.position-filter .nav-item a.active').html().replace('Pitchers', 'P'),
         keyword = $('#search-player').val().toLowerCase().trim();    

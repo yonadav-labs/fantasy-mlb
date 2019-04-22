@@ -5,6 +5,7 @@
 .fpts-filter {
     width: 240px;
     height: 6px;
+    margin-top: 13px;
 }
 
 .ui-slider-horizontal .ui-slider-handle {
@@ -12,18 +13,14 @@
 }
 
 .ui-slider .ui-slider-handle {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     cursor: pointer;
-    border: none;
-    background-image: url(/static/img/bb.png);
-    background-size: cover;
-    background-repeat: no-repeat;
 }
 
 .slider-val {
-    border: 0; 
+    /*border: 0; */
     color: #007bff; 
     font-weight: bold;
 }

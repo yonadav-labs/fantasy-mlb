@@ -47,6 +47,14 @@ def _is_full_lineup(lineup, ds):
     return num_players == ROSTER_SIZE[ds]
 
 @csrf_exempt
+def get_team_stack_dlg(request, ds):
+    teams = []
+    for ii in Game.objects.filter(data_source=ds):
+        teams.append(ii.home_team.lower())
+        teams.append(ii.visit_team.lower())
+    return render(request, 'team-stack-dlg.html', locals())
+
+@csrf_exempt
 def check_mlineups(request):
     ds = request.POST.get('ds')
     num_lineups = request.session.get(ds+'_num_lineups', 1)
