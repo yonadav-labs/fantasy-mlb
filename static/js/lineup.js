@@ -1,6 +1,7 @@
 var ds = 'DraftKings',
     bid = '',
-    sort_dir = 1;
+    sort_dir = 1,
+    team_stack = {};
 
 $(function() {
   // when change slate
@@ -87,22 +88,36 @@ $(function() {
     $.get('/get-team-stack-dlg/'+ds, {}, function(data) {
       $('#dlg-team-stack .modal-body').html(data);
 
-      $( "#dlg-team-stack .slider-range" ).slider({
+      var max = ds == "DraftKings" ? 5 : 4;
+
+      $('#dlg-team-stack .team-min').html(1);
+      $('#dlg-team-stack .team-max').html(max);
+
+      $("#dlg-team-stack .slider-range" ).slider({
         range: true,
         min: 1,
         step: 1,
-        max: 5,
-        values: [ 1, 5 ],
-        change: function( event, ui ) {
-          // loadBoard();
-        },
+        max: max,
+        values: [ 1, max ],
         slide: function( event, ui ) {
-          // $(this).parent().find('.slider-val').val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
+          $(this).parent().find('.team-min').html(ui.values[0]);
+          $(this).parent().find('.team-max').html(ui.values[1]);
         }
       });
 
       $('#dlg-team-stack').modal();
     })
+  }
+
+  setTeamStack_ = function () {
+    $( "#dlg-team-stack .team-stack-item" ).each(function( index ) {
+      var team = $(this).data('team'),
+          min = $(this).find('.team-min').html() * 1,
+          max = $(this).find('.team-max').html() * 1;
+      team_stack[team] = { min: min, max: max };
+    });
+
+    console.log(team_stack);
   }
 
   filterTable = function () {

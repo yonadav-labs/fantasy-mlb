@@ -442,7 +442,7 @@ def _get_lineups(request):
     for ii in teams:
         if not ii:
             continue
-        if ii in team_stack:
+        if ii.lower() in team_stack:
             _team_stack[ii] = team_stack[ii]
         else:
             _team_stack[ii] = { 'min': min_team_member, 'max': max_team_member }
