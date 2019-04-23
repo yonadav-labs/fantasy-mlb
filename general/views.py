@@ -442,10 +442,10 @@ def _get_lineups(request):
     for ii in teams:
         if not ii:
             continue
-        if ii.lower() in team_stack:
-            _team_stack[ii] = team_stack[ii]
-        else:
-            _team_stack[ii] = { 'min': min_team_member, 'max': max_team_member }
+
+        min_team_member_ = int(params.get('team-min-{}'.format(ii.lower()), min_team_member))
+        max_team_member_ = int(params.get('team-max-{}'.format(ii.lower()), max_team_member))
+        _team_stack[ii] = { 'min': min_team_member_, 'max': max_team_member_ }
 
     # get exposure for each valid player
     _exposure = []

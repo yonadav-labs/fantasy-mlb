@@ -90,15 +90,15 @@ $(function() {
 
       var max = ds == "DraftKings" ? 5 : 4;
 
-      $('#dlg-team-stack .team-min').html(1);
+      $('#dlg-team-stack .team-min').html(0);
       $('#dlg-team-stack .team-max').html(max);
 
       $("#dlg-team-stack .slider-range" ).slider({
         range: true,
-        min: 1,
+        min: 0,
         step: 1,
         max: max,
-        values: [ 1, max ],
+        values: [ 0, max ],
         slide: function( event, ui ) {
           $(this).parent().find('.team-min').html(ui.values[0]);
           $(this).parent().find('.team-max').html(ui.values[1]);
@@ -115,9 +115,15 @@ $(function() {
           min = $(this).find('.team-min').html() * 1,
           max = $(this).find('.team-max').html() * 1;
       team_stack[team] = { min: min, max: max };
+      
+      if ($('#frm-player #team-min-'+team).length) {
+        $('#frm-player #team-min-'+team).val(min);
+        $('#frm-player #team-max-'+team).val(max);
+      } else {
+        $('#frm-player').append(`<input type="hidden" name="team-min-${team}" value="${min}" id="team-min-${team}">`);
+        $('#frm-player').append(`<input type="hidden" name="team-max-${team}" value="${max}" id="team-max-${team}">`);
+      }
     });
-
-    console.log(team_stack);
   }
 
   filterTable = function () {
