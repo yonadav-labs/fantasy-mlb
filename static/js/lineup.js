@@ -13,6 +13,7 @@ $(function() {
   $('.nav-tabs.ds .nav-link').click(function () {
     ds = $(this).text();
     $('#ds').val(ds);
+    team_stack = {}
 
     if (ds == 'FanDuel') {
       $('li.cb-fd a').text('C/1B');
@@ -90,9 +91,6 @@ $(function() {
 
       var max = ds == "DraftKings" ? 5 : 4;
 
-      $('#dlg-team-stack .team-min').html(0);
-      $('#dlg-team-stack .team-max').html(max);
-
       $("#dlg-team-stack .slider-range" ).slider({
         range: true,
         min: 0,
@@ -104,6 +102,18 @@ $(function() {
           $(this).parent().find('.team-max').html(ui.values[1]);
         }
       });
+
+      if ($.isEmptyObject(team_stack)) {
+        $('#dlg-team-stack .team-min').html(0);
+        $('#dlg-team-stack .team-max').html(max);
+      } else {
+        for (var team in team_stack) {
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-min`).html(team_stack[team].min);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-max`).html(team_stack[team].max);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 0, team_stack[team].min);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 1, team_stack[team].max);
+        }
+      }
 
       $('#dlg-team-stack').modal();
     })
