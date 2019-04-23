@@ -1,7 +1,7 @@
 var ds = 'DraftKings',
     bid = '',
     sort_dir = 1,
-    team_stack = {};
+    team_stack = { FanDuel: {}, DraftKings: {} };
 
 $(function() {
   // when change slate
@@ -13,7 +13,6 @@ $(function() {
   $('.nav-tabs.ds .nav-link').click(function () {
     ds = $(this).text();
     $('#ds').val(ds);
-    team_stack = {}
 
     if (ds == 'FanDuel') {
       $('li.cb-fd a').text('C/1B');
@@ -103,15 +102,15 @@ $(function() {
         }
       });
 
-      if ($.isEmptyObject(team_stack)) {
+      if ($.isEmptyObject(team_stack[ds])) {
         $('#dlg-team-stack .team-min').html(0);
         $('#dlg-team-stack .team-max').html(max);
       } else {
-        for (var team in team_stack) {
-          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-min`).html(team_stack[team].min);
-          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-max`).html(team_stack[team].max);
-          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 0, team_stack[team].min);
-          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 1, team_stack[team].max);
+        for (var team in team_stack[ds]) {
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-min`).html(team_stack[ds][team].min);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .team-max`).html(team_stack[ds][team].max);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 0, team_stack[ds][team].min);
+          $(`#dlg-team-stack .team-stack-item.tm_${team} .slider-range`).slider('values', 1, team_stack[ds][team].max);
         }
       }
 
@@ -124,7 +123,7 @@ $(function() {
       var team = $(this).data('team'),
           min = $(this).find('.team-min').html() * 1,
           max = $(this).find('.team-max').html() * 1;
-      team_stack[team] = { min: min, max: max };
+      team_stack[ds][team] = { min: min, max: max };
       
       if ($('#frm-player #team-min-'+team).length) {
         $('#frm-player #team-min-'+team).val(min);
