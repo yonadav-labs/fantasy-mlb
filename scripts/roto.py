@@ -35,7 +35,7 @@ def get_players(data_source):
         # slate = 'all'
 
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
-              'site={}&projections=&type=main&slate={}'.format(data_source, slate)
+              'site={}&projections=&type=main&slate={}&ownership='.format(data_source, slate)
 
         players = requests.get(url).json()
 
