@@ -445,7 +445,8 @@ def _get_lineups(request):
 
         min_team_member_ = int(params.get('team-min-{}'.format(ii.lower()), min_team_member))
         max_team_member_ = int(params.get('team-max-{}'.format(ii.lower()), max_team_member))
-        _team_stack[ii] = { 'min': min_team_member_, 'max': max_team_member_ }
+        percent_team_member_ = int(params.get('team-percent-{}'.format(ii.lower()), 0))
+        _team_stack[ii] = { 'min': min_team_member_, 'max': max_team_member_, 'percent': percent_team_member_ }
 
     # get exposure for each valid player
     _exposure = []
