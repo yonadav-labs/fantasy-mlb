@@ -39,6 +39,17 @@ $(function() {
       return false;
     }
 
+    // validate num lineups
+    var num_lineups_ = parseInt($('.num-lineups').val() || 0);
+    if (num_lineups_ > 150 || num_lineups_ < 0) {
+      $('.num-lineups').addClass('border-danger');
+      $('.num-lineups').removeClass('border-light');
+      return;
+    } else {
+      $('.num-lineups').removeClass('border-danger');
+      $('.num-lineups').addClass('border-light');      
+    }
+
     $('#frm-player').submit();
     $('#dlg-export').modal();
   });
@@ -66,6 +77,17 @@ $(function() {
     if (num_players < 8) {
       alert('Please choose more than 8 players.');
       return
+    }
+
+    // validate num lineups
+    var num_lineups_ = parseInt($('.num-lineups').val() || 0);
+    if (num_lineups_ > 150 || num_lineups_ < 0) {
+      $('.num-lineups').addClass('border-danger');
+      $('.num-lineups').removeClass('border-light');
+      return;
+    } else {
+      $('.num-lineups').removeClass('border-danger');
+      $('.num-lineups').addClass('border-light');      
     }
 
     $('#div-result').html('<div class="font-weight-bold text-center" style="margin-top: 64px; min-height: 108px;">Calculating ...</div>');
