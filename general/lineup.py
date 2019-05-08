@@ -173,6 +173,15 @@ def get_num_lineups(player, lineups):
 def get_exposure(players, lineups):
     return { ii.id: get_num_lineups(ii, lineups) for ii in players }
 
+def get_percent_team(lineups, team):
+    num = 0
+    for lineup in lineups:
+        for ii in lineup.players:
+            if ii.team == team:
+                num += 1
+                break
+    return num
+
 def check_batter_vs_pitcher(roster):
     opp_pitcher_ids = [ii.opp_pitcher_id for ii in roster.players if ii.opp_pitcher_id]
     for ii in roster.players:
@@ -220,6 +229,12 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
                 if cur_exps[ii['id']] >= ii['min']:
                     break
                     
+                for team in _team_stack:
+                    percent_team = get_percent_team(result, team) 
+                    if percent_team >= _team_stack[team]['percent']:
+                        _team_stack[team]['min'] = 0
+                        _team_stack[team]['max'] = 0
+
                 roster = get_lineup(ds, players, locked+_locked, ban+_ban, max_point, con_mul, min_salary, 
                                     max_salary, _team_stack)
 
@@ -239,6 +254,12 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
         for pid, exp in cur_exps.items():
             if exp >= exposure_d[pid]['max'] and pid not in ban:
                 ban.append(pid)
+
+        for team in _team_stack:
+            percent_team = get_percent_team(result, team) 
+            if percent_team >= _team_stack[team]['percent']:
+                _team_stack[team]['min'] = 0
+                _team_stack[team]['max'] = 0
 
         roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_salary, _team_stack)
 
