@@ -232,8 +232,9 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
                 for team in _team_stack:
                     percent_team = get_percent_team(result, team) 
                     if percent_team >= _team_stack[team]['percent']:
+                        _team_stack[team]['percent'] = num_lineups
+                        _team_stack[team]['max'] = max(_team_stack[team]['min'] -1, 0)
                         _team_stack[team]['min'] = 0
-                        _team_stack[team]['max'] = 0
 
                 roster = get_lineup(ds, players, locked+_locked, ban+_ban, max_point, con_mul, min_salary, 
                                     max_salary, _team_stack)
@@ -258,8 +259,9 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
         for team in _team_stack:
             percent_team = get_percent_team(result, team) 
             if percent_team >= _team_stack[team]['percent']:
+                _team_stack[team]['percent'] = num_lineups
+                _team_stack[team]['max'] = max(_team_stack[team]['min'] -1, 0)
                 _team_stack[team]['min'] = 0
-                _team_stack[team]['max'] = 0
 
         roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_salary, _team_stack)
 

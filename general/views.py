@@ -445,7 +445,7 @@ def _get_lineups(request):
 
         min_team_member_ = int(params.get('team-min-{}'.format(ii.lower()), min_team_member))
         max_team_member_ = int(params.get('team-max-{}'.format(ii.lower()), max_team_member))
-        percent_team_member_ = int(params.get('team-percent-{}'.format(ii.lower()), 15))
+        percent_team_member_ = int(params.get('team-percent-{}'.format(ii.lower()), 100))
 
         if percent_team_member_ == 0:
             min_team_member_ = 0
