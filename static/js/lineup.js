@@ -131,12 +131,20 @@ $(function() {
         slide: function( event, ui ) {
           $(this).parent().find('.team-min').html(ui.values[0]);
           $(this).parent().find('.team-max').html(ui.values[1]);
+
+          if ($(this).data('is-general')) {
+            $(`#dlg-team-stack .team-stack-item .team-min`).html(ui.values[0]);
+            $(`#dlg-team-stack .team-stack-item .team-max`).html(ui.values[1]);
+            $(`#dlg-team-stack .team-stack-item .slider-range`).slider('values', 1, ui.values[1]);
+            $(`#dlg-team-stack .team-stack-item .slider-range`).slider('values', 0, ui.values[0]);
+          }
         }
       });
 
+      $('#dlg-team-stack .team-min').html(0);
+      $('#dlg-team-stack .team-max').html(max);
+
       if ($.isEmptyObject(team_stack[ds])) {
-        $('#dlg-team-stack .team-min').html(0);
-        $('#dlg-team-stack .team-max').html(max);
         $('#dlg-team-stack .team-percent').val(0);
       } else {
         for (var team in team_stack[ds]) {

@@ -256,6 +256,7 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
             if exp >= exposure_d[pid]['max'] and pid not in ban:
                 ban.append(pid)
 
+        # pdb.set_trace()
         for team in _team_stack:
             percent_team = get_percent_team(result, team) 
             if percent_team >= _team_stack[team]['percent']:
