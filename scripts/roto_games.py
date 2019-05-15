@@ -12,13 +12,14 @@ django.setup()
 from general.models import *
 from general.views import *
 from general import html2text
+from scripts.get_slate import get_slate
+
 
 def get_games(data_source):
-    slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
-    slate = 'all'
-    slate = 'Main' if data_source == 'FanDuel' else 'all'
+    slate = get_slate(data_source)
     url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=MLB&' + \
           'site={}&type=main&slate={}'.format(data_source, slate)
+    print (url)
 
     games = requests.get(url).json()
     if games:
@@ -35,6 +36,7 @@ def get_games(data_source):
             defaults['home_score'] = html2text.html2text(ii['home_score']).strip()
             defaults['visit_score'] = html2text.html2text(ii['visit_score']).strip()
             Game.objects.create(**defaults)
+
 
 if __name__ == "__main__":
     for ds in DATA_SOURCE:

@@ -12,6 +12,8 @@ django.setup()
 
 from general.models import *
 from general import html2text
+from scripts.get_slate import get_slate
+
 
 def get_delta(ii, ds):
     if not float(ii['proj_points']):
@@ -28,14 +30,14 @@ def get_delta(ii, ds):
         sign = 1 if player and player.proj_delta > 0 else -1
     return delta * sign
 
+
 def get_players(data_source):
     try:
-        slate = 'all' if data_source == 'Yahoo' else 'Opening Day'
-        slate = 'Main' if data_source == 'FanDuel' else 'all'
-        # slate = 'all'
+        slate = get_slate(data_source)
 
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
               'site={}&projections=&type=main&slate={}&ownership='.format(data_source, slate)
+        print (url)
 
         players = requests.get(url).json()
 
