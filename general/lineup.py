@@ -173,13 +173,15 @@ def get_num_lineups(player, lineups):
 def get_exposure(players, lineups):
     return { ii.id: get_num_lineups(ii, lineups) for ii in players }
 
-def get_percent_team(lineups, team):
+def get_percent_team(lineups, team, team_info):
     num = 0
     for lineup in lineups:
+        num_players = 0
         for ii in lineup.players:
             if ii.team == team:
-                num += 1
-                break
+                num_players += 1
+        if num_players >= team_info['min']:
+            num += 1
     return num
 
 def check_batter_vs_pitcher(roster):
@@ -190,10 +192,8 @@ def check_batter_vs_pitcher(roster):
     return True
 
 def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, exposure, cus_proj, no_batter_vs_pitcher):
-    result = []
-    max_point = 10000
-    exposure_d = { ii['id']: ii for ii in exposure }
 
+    # preprocess players
     con_mul = []
     players_ = []
     idx = 0
@@ -211,60 +211,68 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
         con_mul.append(ci_)
     players = players_
 
+    result = []
+    max_point = 10000
+    exposure_d = { ii['id']: ii for ii in exposure }
     ban = []
-    _ban = []   # temp ban
-    # for min exposure
-    for ii in exposure:
-        if ii['min']:
-            _locked = [ii['id']]
-            while True:
-                # check and update all users' status
-                cur_exps = get_exposure(players, result)
-                for pid, exp in cur_exps.items():
-                    if exp >= exposure_d[pid]['max'] and pid not in ban:
-                        ban.append(pid)
-                    elif exp >= exposure_d[pid]['min'] > 0 and pid not in _ban:
-                        _ban.append(pid)
+    # pdb.set_trace()
 
-                if cur_exps[ii['id']] >= ii['min']:
-                    break
-                    
-                for team in _team_stack:
-                    percent_team = get_percent_team(result, team) 
-                    if percent_team >= _team_stack[team]['percent']:
-                        _team_stack[team]['percent'] = num_lineups
-                        _team_stack[team]['max'] = max(_team_stack[team]['min'] -1, 0)
-                        _team_stack[team]['min'] = 0
+    for team, team_info in _team_stack.items():
+        if team_info['min'] == 0:
+            continue
 
-                roster = get_lineup(ds, players, locked+_locked, ban+_ban, max_point, con_mul, min_salary, 
-                                    max_salary, _team_stack)
+        while True:
+            percent_team = get_percent_team(result, team, team_info)
+            if percent_team >= team_info['percent']:
+                break
 
-                if not roster:
-                    return result
+            # create temp team stack
+            __team_stack = {
+                team: team_info
+            }
 
-                max_point = float(roster.projected()) - 0.001
-                if roster.get_num_teams() >= TEAM_LIMIT[ds]:
-                    if not no_batter_vs_pitcher or check_batter_vs_pitcher(roster):
-                        result.append(roster)
-                        if len(result) == num_lineups:
-                            return result
+            for _team, _team_info in _team_stack.items():
+                if _team != team:
+                    __team_stack[_team] = {
+                        'min': 0,
+                        'max': _team_info['min']-1 if _team_info['min'] != 0 else _team_info['max'],
+                        'percent': _team_info['percent']
+                    }
 
-    # for max exposure -> focus on getting optimized lineups
+            # pdb.set_trace()
+            # check and update all users' status
+            cur_exps = get_exposure(players, result)
+            for pid, exp in cur_exps.items():
+                if exp >= exposure_d[pid]['max'] and pid not in ban:
+                    ban.append(pid)
+
+            # pdb.set_trace()
+            roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, 
+                                max_salary, __team_stack)
+
+            if not roster:
+                return result
+
+            max_point = float(roster.projected()) - 0.001
+            if roster.get_num_teams() >= TEAM_LIMIT[ds]:
+                if not no_batter_vs_pitcher or check_batter_vs_pitcher(roster):
+                    result.append(roster)
+                    if len(result) == num_lineups:
+                        return result
+
+    # reset team stack - only care max
+    for team, team_info in _team_stack.items():
+        team_info['min'] = 0
+
     while True:
+        # check and update all users' status
         cur_exps = get_exposure(players, result)
         for pid, exp in cur_exps.items():
             if exp >= exposure_d[pid]['max'] and pid not in ban:
                 ban.append(pid)
 
-        # pdb.set_trace()
-        for team in _team_stack:
-            percent_team = get_percent_team(result, team) 
-            if percent_team >= _team_stack[team]['percent']:
-                _team_stack[team]['percent'] = num_lineups
-                _team_stack[team]['max'] = max(_team_stack[team]['min'] -1, 0)
-                _team_stack[team]['min'] = 0
-
-        roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_salary, _team_stack)
+        roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, 
+                            max_salary, _team_stack)
 
         if not roster:
             return result
