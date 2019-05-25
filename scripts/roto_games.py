@@ -16,9 +16,9 @@ from scripts.get_slate import get_slate
 
 
 def get_games(data_source):
-    slate = get_slate(data_source)
+    slate, type = get_slate(data_source)
     url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=MLB&' + \
-          'site={}&type=main&slate={}'.format(data_source, slate)
+          'site={}&type={}&slate={}'.format(data_source, type, slate)
     print (url)
 
     games = requests.get(url).json()

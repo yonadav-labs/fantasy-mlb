@@ -419,14 +419,13 @@ TEAM_MEMEBER_LIMIT = {
 
 def _get_lineups(request):
     params = request.POST
+
     ids = params.getlist('ids')
     locked = [int(ii) for ii in params.getlist('locked')]
     num_lineups = min(int(params.get('num-lineups', 1)), 150)
     ds = params.get('ds', 'DraftKings')
     min_salary = int(params.get('min_salary', 0))
     max_salary = int(params.get('max_salary', SALARY_CAP[ds]))
-    min_team_member = int(params.get('min_team_member', 0))
-    max_team_member = int(params.get('max_team_member', TEAM_MEMEBER_LIMIT[ds]))
 
     exposure = params.get('exposure')
     team_stack = params.get('team_stack', {})
@@ -437,14 +436,15 @@ def _get_lineups(request):
     flt = { 'proj_points__gt': 0, 'id__in': ids, 'salary__gt': 0 }
     players = Player.objects.filter(**flt).order_by('-proj_points')
 
+    # generate team stack
     _team_stack = {}
     teams = players.values_list('team', flat=True).distinct()
     for ii in teams:
         if not ii:
             continue
 
-        min_team_member_ = int(params.get('team-min-{}'.format(ii.lower()), min_team_member))
-        max_team_member_ = int(params.get('team-max-{}'.format(ii.lower()), max_team_member))
+        min_team_member_ = int(params.get('team-min-{}'.format(ii.lower()), 0))
+        max_team_member_ = int(params.get('team-max-{}'.format(ii.lower()), TEAM_MEMEBER_LIMIT[ds]))
         percent_team_member_ = int(params.get('team-percent-{}'.format(ii.lower()), 100))
 
         if percent_team_member_ == 0:

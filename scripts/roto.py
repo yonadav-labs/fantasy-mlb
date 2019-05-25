@@ -33,10 +33,10 @@ def get_delta(ii, ds):
 
 def get_players(data_source):
     try:
-        slate = get_slate(data_source)
+        slate, type = get_slate(data_source)
 
         url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
-              'site={}&projections=&type=main&slate={}&ownership='.format(data_source, slate)
+              'site={}&projections=&type={}&slate={}&ownership='.format(data_source, type, slate)
         print (url)
 
         players = requests.get(url).json()
