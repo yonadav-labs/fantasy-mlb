@@ -9,3 +9,4 @@ django.setup()
 from general.models import *
 
 Player.objects.all().update(lock_update=False)
+Game.objects.all().update(lock_update=False)

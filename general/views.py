@@ -49,7 +49,7 @@ def _is_full_lineup(lineup, ds):
 @csrf_exempt
 def get_team_stack_dlg(request, ds):
     teams = []
-    for ii in Game.objects.filter(data_source=ds):
+    for ii in Game.objects.filter(data_source=ds, display=True):
         teams.append(ii.home_team.lower())
         teams.append(ii.visit_team.lower())
     return render(request, 'team-stack-dlg.html', locals())
@@ -397,7 +397,7 @@ def go_dfs(request):
 @csrf_exempt
 def get_slates(request):
     ds = request.POST.get('ds')
-    games = Game.objects.filter(data_source=ds)
+    games = Game.objects.filter(data_source=ds, display=True)
     return render(request, 'game-slates.html', locals())
 
 

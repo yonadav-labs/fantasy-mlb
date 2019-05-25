@@ -23,19 +23,20 @@ def get_games(data_source):
 
     games = requests.get(url).json()
     if games:
-        Game.objects.filter(data_source=data_source).delete()
+        Game.objects.filter(data_source=data_source, lock_update=False).delete()
 
         fields = ['game_status', 'ml', 'home_team', 'visit_team']
         for ii in games:
-            defaults = { key: str(ii[key]).replace(',', '') for key in fields }
-            defaults['date'] = datetime.datetime.strptime(ii['date'].split(' ')[1], '%I:%M%p')
-            # date is not used
-            defaults['date'] = datetime.datetime.combine(datetime.date.today(), defaults['date'].time())
-            defaults['ou'] = float(ii['ou']) if ii['ou'] else 0
-            defaults['data_source'] = data_source
-            defaults['home_score'] = html2text.html2text(ii['home_score']).strip()
-            defaults['visit_score'] = html2text.html2text(ii['visit_score']).strip()
-            Game.objects.create(**defaults)
+            if not Game.objects.filter(home_team=ii['home_team'], visit_team=ii['visit_team']).exists():
+                defaults = { key: str(ii[key]).replace(',', '') for key in fields }
+                defaults['date'] = datetime.datetime.strptime(ii['date'].split(' ')[1], '%I:%M%p')
+                # date is not used
+                defaults['date'] = datetime.datetime.combine(datetime.date.today(), defaults['date'].time())
+                defaults['ou'] = float(ii['ou']) if ii['ou'] else 0
+                defaults['data_source'] = data_source
+                defaults['home_score'] = html2text.html2text(ii['home_score']).strip()
+                defaults['visit_score'] = html2text.html2text(ii['visit_score']).strip()
+                Game.objects.create(**defaults)
 
 
 if __name__ == "__main__":
