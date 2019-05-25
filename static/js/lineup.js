@@ -1,7 +1,14 @@
 var ds = 'DraftKings',
     bid = '',
     sort_dir = 1,
-    team_stack = { FanDuel: {}, DraftKings: {} },
+    team_stack = { 
+      FanDuel: {
+        enabled: false
+      }, 
+      DraftKings: {
+        enabled: false
+      } 
+    },
     isStackValid = true;
 
 
@@ -11,6 +18,17 @@ function getTotalStackPercent() {
     total_percent += $(this).find('.team-percent').val() * 1;
   });
   return total_percent;
+}
+
+function stackEnable(obj) {
+  team_stack[ds].enabled = $(obj).prop('checked');
+
+  $('#dlg-team-stack .team-percent').prop('disabled', !team_stack[ds].enabled);
+  if (team_stack[ds].enabled) {
+    $("#dlg-team-stack .slider-range" ).slider('enable');
+  } else {
+    $("#dlg-team-stack .slider-range" ).slider('disable');
+  }
 }
 
 $(function() {
@@ -143,8 +161,16 @@ $(function() {
 
       $('#dlg-team-stack .team-min').html(0);
       $('#dlg-team-stack .team-max').html(max);
+      // enable / disable
+      $('#dlg-team-stack .stack-enable').prop('checked', team_stack[ds].enabled);
+      $('#dlg-team-stack .team-percent').prop('disabled', !team_stack[ds].enabled);
+      if (team_stack[ds].enabled) {
+        $("#dlg-team-stack .slider-range" ).slider('enable');
+      } else {
+        $("#dlg-team-stack .slider-range" ).slider('disable');
+      }
 
-      if ($.isEmptyObject(team_stack[ds])) {
+      if (Object.keys(team_stack[ds]).length == 1) {
         $('#dlg-team-stack .team-percent').val(0);
       } else {
         for (var team in team_stack[ds]) {
@@ -164,7 +190,7 @@ $(function() {
   }
 
   setTeamStack_ = function () {
-    if (isStackValid) {
+    if (!team_stack[ds].enabled || isStackValid) {
       $( "#dlg-team-stack .team-stack-item" ).each(function( index ) {
         var team = $(this).data('team'),
             min = $(this).find('.team-min').html() * 1,
@@ -172,15 +198,19 @@ $(function() {
             percent = $(this).find('.team-percent').val() * 1;
 
         team_stack[ds][team] = { min: min, max: max, percent: percent };
-        
-        if ($('#frm-player #team-min-'+team).length) {
-          $('#frm-player #team-min-'+team).val(min);
-          $('#frm-player #team-max-'+team).val(max);
-          $('#frm-player #team-percent-'+team).val(percent);
+
+        if (team_stack[ds].enabled) {
+          if ($('#frm-player #team-min-'+team).length) {
+            $('#frm-player #team-min-'+team).val(min);
+            $('#frm-player #team-max-'+team).val(max);
+            $('#frm-player #team-percent-'+team).val(percent);
+          } else {
+            $('#frm-player').append(`<input type="hidden" class="h38r2" name="team-min-${team}" value="${min}" id="team-min-${team}">`);
+            $('#frm-player').append(`<input type="hidden" class="h38r2" name="team-max-${team}" value="${max}" id="team-max-${team}">`);
+            $('#frm-player').append(`<input type="hidden" class="h38r2" name="team-percent-${team}" value="${percent}" id="team-percent-${team}">`);
+          }          
         } else {
-          $('#frm-player').append(`<input type="hidden" name="team-min-${team}" value="${min}" id="team-min-${team}">`);
-          $('#frm-player').append(`<input type="hidden" name="team-max-${team}" value="${max}" id="team-max-${team}">`);
-          $('#frm-player').append(`<input type="hidden" name="team-percent-${team}" value="${percent}" id="team-percent-${team}">`);
+          $('#frm-player .h38r2').remove();          
         }
       });
 
