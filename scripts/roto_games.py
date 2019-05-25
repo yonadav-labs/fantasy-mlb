@@ -27,7 +27,7 @@ def get_games(data_source):
 
         fields = ['game_status', 'ml', 'home_team', 'visit_team']
         for ii in games:
-            if not Game.objects.filter(home_team=ii['home_team'], visit_team=ii['visit_team']).exists():
+            if not Game.objects.filter(home_team=ii['home_team'], visit_team=ii['visit_team'], data_source=data_source).exists():
                 defaults = { key: str(ii[key]).replace(',', '') for key in fields }
                 defaults['date'] = datetime.datetime.strptime(ii['date'].split(' ')[1], '%I:%M%p')
                 # date is not used
