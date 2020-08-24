@@ -44,7 +44,7 @@ def get_players(data_source):
         fields = ['money_line', 'position', 'opponent', 'actual_position', 
                   'salary', 'team', 'opp_pitcher_id']
 
-        print data_source, len(players)
+        print (data_source, len(players))
         if len(players) > 20:
             Player.objects.filter(data_source=data_source, lock_update=False).update(play_today=False)
 
