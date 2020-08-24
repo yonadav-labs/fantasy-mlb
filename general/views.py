@@ -310,6 +310,7 @@ def _get_export_cell(player, ds):
     else:
         return player.rid or str(player) + ' - No ID'
 
+@xframe_options_exempt
 def export_lineups(request):
     lineups, _ = _get_lineups(request)
     ds = request.POST.get('ds')
@@ -331,7 +332,7 @@ def export_lineups(request):
 
     return response
 
-
+@xframe_options_exempt
 def export_manual_lineup(request):
     ds = request.session.get('ds')
     lidx = request.GET.getlist('lidx')
