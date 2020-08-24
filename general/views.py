@@ -327,6 +327,8 @@ def export_lineups(request):
     response = HttpResponse(wrapper, content_type = content_type)
     response['Content-Length'] = os.path.getsize( path )
     response['Content-Disposition'] = 'attachment; filename=%s' % smart_str( os.path.basename( path ) )
+    response['X-Frame-Options'] = 'GOFORIT'
+
     return response
 
 
@@ -350,6 +352,8 @@ def export_manual_lineup(request):
     response = HttpResponse(wrapper, content_type = content_type)
     response['Content-Length'] = os.path.getsize( path )
     response['Content-Disposition'] = 'attachment; filename=%s' % smart_str( os.path.basename( path ) )
+    response['X-Frame-Options'] = 'GOFORIT'
+
     return response
 
 
