@@ -188,9 +188,15 @@ def get_players(request):
     for ii in Player.objects.filter(data_source=ds, team__in=teams, play_today=True):
         player = model_to_dict(ii, fields=['id', 'injury', 'avatar', 'salary', 'team',
                                            'actual_position', 'first_name', 'last_name',
-                                           'handedness', 'start', 'start_status'])
+                                           'handedness', 'start', 'start_status', 'opponent'])
         if ds == 'FanDuel' and ii.actual_position == 'C':
             player['actual_position'] = 'C/1B'
+
+        if player['opponent'].startswith('@'):
+            player['opponent'] = '@ '+player['opponent'][1:]
+        else:
+            player['opponent'] = 'vs '+player['opponent']
+
         player['proj_points'] = float(cus_proj.get(str(ii.id), ii.proj_points))
         player['pt_sal'] = player['proj_points'] * factor / ii.salary if ii.salary else 0
         players.append(player)

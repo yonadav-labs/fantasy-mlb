@@ -35,7 +35,7 @@
                 <span class="text-danger font-weight-bold ml-3">{{ ii.injury }}</span>
               {% endif %}
             </div>
-            <div class="sub">{{ ii.team }} {{ ii.handedness }} {% if ii.start and ii.start != '-' %}{{ ii.start }}{% endif %} {% if ii.start and not ii.start_status %}<i class="fas fa-check text-success"></i>{% endif %}</div>
+            <div class="sub">{{ ii.team }} {{ ii.opponent }} {{ ii.handedness }} {% if ii.start and ii.start != '-' %}{{ ii.start }}{% endif %} {% if ii.start and not ii.start_status %}<i class="fas fa-check text-success"></i>{% endif %}</div>
           </a>
         </td>
         <td class="text-right pr-3">{% if ds != 'Yahoo' %}${% endif %}{{ ii.salary|floatformat:0 }}</td>
