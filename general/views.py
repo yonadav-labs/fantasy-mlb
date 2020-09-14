@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import os
 import json
 import math
+import random
 import datetime
 import mimetypes
 from wsgiref.util import FileWrapper
@@ -391,6 +392,47 @@ def put_ids(request):
         result = '{} / {}'.format(len(failed.split('\n')), len(ids_))
 
     return render(request, 'put-ids.html', locals())
+
+
+def get_delta(ds):
+    factor = (-10, 10)
+    sign = 1 if random.randrange(0, 2) else -1
+    delta = random.randrange(factor[0], factor[1]) / 10.0
+
+    return delta * sign
+
+
+@staff_member_required
+def put_projection(request):
+    last_updated = Game.objects.all().order_by('-updated_at').first().updated_at
+
+    if request.method == 'GET':
+        result = '-'
+    else:
+        ds = request.POST.get('ds')
+        projection = request.POST.get('projection').strip()
+        projection_ = projection.split('\r\n')
+        names = request.POST.get('names').strip()
+        names_ = names.split('\r\n')
+
+        failed = ''
+        for idx, name in enumerate(names_):
+            d = { 'proj_points': float(projection_[idx])+get_delta(ds), 'lock_update': True }
+            first_name, last_name = parse_name(name)
+            flag = Player.objects.filter(first_name__iexact=first_name, 
+                                         last_name__iexact=last_name, 
+                                         data_source=ds).update(**d)
+
+            if not flag:  # check for team (DEF)
+                flag = Player.objects.filter(first_name__iexact=name, 
+                                             last_name='', 
+                                             data_source=ds).update(**d)
+            
+            if not flag:
+                failed += '{} ({})\n'.format(name, projection_[idx])
+        result = '{} / {}'.format(len(failed.split('\n')), len(projection_))
+
+    return render(request, 'put-projection.html', locals())
 
 
 @staff_member_required
