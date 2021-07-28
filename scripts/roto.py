@@ -31,12 +31,12 @@ def get_delta(ii, ds):
     return delta * sign
 
 
-def get_players(data_source):
+def get_players(data_source, data_source_id):
     try:
-        slate, type = get_slate(data_source)
+        slate_id = get_slate(data_source)
 
-        url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php?sport=MLB&' + \
-              'site={}&projections=&type={}&slate={}&rst='.format(data_source, type, slate)
+        url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php' + \
+              '?siteID={}&slateID={}&projSource=RotoWire&rst=RotoWire'.format(data_source_id, slate_id)
         print (url)
 
         players = requests.get(url).json()
@@ -88,5 +88,5 @@ def get_players(data_source):
 
 
 if __name__ == "__main__":
-    for ds in ['DraftKings', 'FanDuel']:
-        get_players(ds)
+    for id, ds in enumerate(['DraftKings', 'FanDuel'], 1):
+        get_players(ds, id)
