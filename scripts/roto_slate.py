@@ -2,6 +2,7 @@ import requests
 
 from bs4 import BeautifulSoup
 
+
 def get_slate(ds):
     try:
         url = 'https://www.rotowire.com/daily/mlb/optimizer.php?site={}'.format(ds)

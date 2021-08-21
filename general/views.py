@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-import json
 import math
 import random
 import datetime
@@ -13,21 +12,22 @@ from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Avg, Q, Sum
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.forms.models import model_to_dict
 
 from general.models import *
 from general.lineup import *
-
-from scripts.roto import get_players as roto_get_players
-from scripts.roto_games import get_games as roto_get_games
+from general.utils import parse_name
+from general.constants import CSV_FIELDS, SALARY_CAP, TEAM_MEMEBER_LIMIT
+from scripts.roto_games import fetch_games
+from scripts.roto_players import fetch_players
 
 
 def players(request):
     players = Player.objects.filter(data_source='FanDuel').order_by('first_name')
     return render(request, 'players.html', locals())
+
 
 @xframe_options_exempt
 def lineup_builder(request):
@@ -35,10 +35,12 @@ def lineup_builder(request):
     num_lineups = request.session.get('DraftKings_num_lineups', 1)
     return render(request, 'lineup-builder.html', locals())
 
+
 @xframe_options_exempt
 def lineup_optimizer(request):
     data_sources = DATA_SOURCE[:2]
     return render(request, 'lineup-optimizer.html', locals())
+
 
 def _is_full_lineup(lineup, ds):
     if not lineup:
@@ -47,6 +49,7 @@ def _is_full_lineup(lineup, ds):
     num_players = sum([1 for ii in lineup if ii['player']])
     return num_players == ROSTER_SIZE[ds]
 
+
 @csrf_exempt
 def get_team_stack_dlg(request, ds):
     teams = []
@@ -54,6 +57,7 @@ def get_team_stack_dlg(request, ds):
         teams.append(ii.home_team.lower())
         teams.append(ii.visit_team.lower())
     return render(request, 'team-stack-dlg.html', locals())
+
 
 @csrf_exempt
 def check_mlineups(request):
@@ -65,6 +69,7 @@ def check_mlineups(request):
         lineup = request.session.get(key)
         res.append([ii, 'checked' if _is_full_lineup(lineup, ds) else 'disabled'])
     return JsonResponse(res, safe=False)
+
 
 @csrf_exempt
 def build_lineup(request):
@@ -250,6 +255,7 @@ def get_player(full_name, team):
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
 
+
 def get_num_lineups(player, lineups):
     num = 0
     for ii in lineups:
@@ -317,6 +323,7 @@ def _get_export_cell(player, ds):
     else:
         return player.rid or str(player) + ' - No ID'
 
+
 @xframe_options_exempt
 @csrf_exempt
 def export_lineups(request):
@@ -339,6 +346,7 @@ def export_lineups(request):
     response['X-Frame-Options'] = 'GOFORIT'
 
     return response
+
 
 @xframe_options_exempt
 @csrf_exempt
@@ -440,8 +448,8 @@ def put_projection(request):
 def trigger_scraper(request):
     Player.objects.all().update(play_today=False)
     for ds in DATA_SOURCE:
-        roto_get_players(ds[0])
-        roto_get_games(ds[0])
+        fetch_players(ds[0])
+        fetch_games(ds[0])
 
     return HttpResponse('Completed')
 
@@ -449,27 +457,12 @@ def trigger_scraper(request):
 def go_dfs(request):
     return render(request, 'go-dfs.html')
 
+
 @csrf_exempt
 def get_slates(request):
     ds = request.POST.get('ds')
     games = Game.objects.filter(data_source=ds, display=True)
     return render(request, 'game-slates.html', locals())
-
-
-CSV_FIELDS = {
-    'FanDuel': ['P', 'C1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF', 'UTIL'],
-    'DraftKings': ['P', 'P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'OF', 'OF'],
-}
-
-SALARY_CAP = {
-    'FanDuel': 35000,
-    'DraftKings': 50000,
-}
-
-TEAM_MEMEBER_LIMIT = {
-    'FanDuel': 4,
-    'DraftKings': 5
-}
 
 
 def _get_lineups(request):
