@@ -10,7 +10,11 @@ def parse_name(name):
 
 
 def get_delta(ii, ds):
-    return 0
+    factor = (-10, 10)
+    sign = 1 if random.randrange(0, 2) else -1
+    delta = random.randrange(factor[0], factor[1]) / 10.0
+
+    return delta * sign
 
     if not float(ii['proj_points']):
         factor = (0, 1)

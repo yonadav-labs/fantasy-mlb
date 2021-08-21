@@ -40,6 +40,7 @@ def fetch_games(data_source, data_source_id):
             'ml': str(game['ml']).replace(',', ''),
         }
 
+        # in case there are duplicates
         BaseGame.objects.update_or_create(home_team=game['home_team'],
                                           visit_team=game['visit_team'],
                                           data_source=data_source,
