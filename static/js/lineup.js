@@ -363,7 +363,7 @@ function clear_proj (obj) {
 }
 
 function getGames() {
-  $.post( "/get-slates", 
+  $.post( "/get-games", 
     { 
       ds: ds
     }, 

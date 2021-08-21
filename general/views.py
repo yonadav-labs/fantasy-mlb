@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+import csv
 import math
-import random
 import datetime
 import mimetypes
 from wsgiref.util import FileWrapper
@@ -18,7 +18,7 @@ from django.forms.models import model_to_dict
 
 from general.models import *
 from general.lineup import *
-from general.utils import parse_name
+from general.utils import parse_players_csv, parse_projection_csv
 from general.constants import CSV_FIELDS, SALARY_CAP, TEAM_MEMEBER_LIMIT
 from scripts.roto_games import fetch_games
 from scripts.roto_players import fetch_players
@@ -376,30 +376,28 @@ def export_manual_lineup(request):
 
 
 @staff_member_required
-def put_ids(request):
-    last_updated = '' # Game.objects.all().order_by('-updated_at').first().updated_at
-
+def upload_data(request):
     if request.method == 'GET':
-        result = '-'
+        today = datetime.datetime.now().strftime('%m/%d/%Y')
+        return render(request, 'upload-slate.html', locals())
     else:
-        ds = request.POST.get('ds')
-        ids = request.POST.get('ids').strip()
-        ids_ = ids.split('\r\n')
-        names = request.POST.get('names').strip()
-        names_ = names.split('\r\n')
+        slate_name = request.POST.get('slate')
+        data_source = request.POST.get('data_source')
 
-        failed = ''
-        for idx, name in enumerate(names_):
-            d = { 'rid': ids_[idx] }
-            first_name, last_name = parse_name(name)
-            flag = Player.objects.filter(first_name__iexact=first_name, 
-                                         last_name__iexact=last_name, 
-                                         data_source=ds).update(**d)
-            if not flag:
-                failed += '{}\n'.format(ids_[idx], name)
-        result = '{} / {}'.format(len(failed.split('\n')), len(ids_))
+        players_file = request.FILES['players_file']
+        players_csv = parse_players_csv(players_file, data_source)
+        fields = players_csv.fieldnames
 
-    return render(request, 'put-ids.html', locals())
+        projection_file = request.FILES['projection_file']
+        projection_csv = parse_projection_csv(projection_file)
+
+        # TODO: add validation
+        for player_info in players_csv:
+            print(player_info)
+
+        last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
+
+        return render(request, 'edit-slate.html', locals())
 
 
 @staff_member_required
@@ -414,7 +412,7 @@ def trigger_scraper(request):
 
 
 @csrf_exempt
-def get_slates(request):
+def get_games(request):
     ds = request.POST.get('ds')
     games = Game.objects.filter(data_source=ds, display=True)
     return render(request, 'game-slates.html', locals())

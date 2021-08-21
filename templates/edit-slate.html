@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GREEN LIGHT DFS</title>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="mx-auto mt-5 pt-5" style="width: 600px;">
+      <h4 class="text-center text-success my-4">UPLOAD SLATE (<span class="text-body">{{today}}</span>)</h4>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>{{slate}}</div>
+        <div>{{data_source}}</div>
+        <div>{{last_updated}}</div>
+        <div>{{fields}}</div>
+        <button type="submit" class="btn btn-primary float-right mt-4">Confirm</button>
+      </form>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script type="text/javascript">
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+  </script>
+</body>
+</html>
