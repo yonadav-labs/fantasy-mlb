@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-import csv
 import math
 import datetime
 import mimetypes
@@ -18,6 +17,7 @@ from django.forms.models import model_to_dict
 
 from general.models import *
 from general.lineup import *
+from general.dao import get_slate, load_games, load_players
 from general.utils import parse_players_csv, parse_projection_csv
 from general.constants import CSV_FIELDS, SALARY_CAP, TEAM_MEMEBER_LIMIT
 from scripts.roto_games import fetch_games
@@ -383,17 +383,22 @@ def upload_data(request):
     else:
         slate_name = request.POST.get('slate')
         data_source = request.POST.get('data_source')
+        slate = get_slate(slate_name, data_source)
 
+        # try:
         players_file = request.FILES['players_file']
-        players_csv = parse_players_csv(players_file, data_source)
-        fields = players_csv.fieldnames
+        players_info = parse_players_csv(players_file, data_source)
 
         projection_file = request.FILES['projection_file']
-        projection_csv = parse_projection_csv(projection_file)
+        projection_info = parse_projection_csv(projection_file)
 
         # TODO: add validation
-        for player_info in players_csv:
-            print(player_info)
+        games = load_games(slate, players_info)
+        players = load_players(slate, players_info, projection_info)
+        print(games)
+        print(players)
+        # except Exception:
+        #     pass
 
         last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
 

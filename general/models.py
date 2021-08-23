@@ -13,23 +13,23 @@ class Slate(models.Model):
     name = models.CharField(max_length=120)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - [{self.data_source}]'
 
 
 class Game(models.Model):
     slate = models.ForeignKey(Slate, on_delete=models.CASCADE, related_name="games")
-    time = models.TimeField()
     home_team = models.CharField(max_length=20)
     visit_team = models.CharField(max_length=20)
+    time = models.TimeField(null=True, blank=True)
     home_score = models.CharField(max_length=50, null=True, blank=True)
     visit_score = models.CharField(max_length=50, null=True, blank=True)
-    ou = models.FloatField()
-    ml = models.CharField(max_length=20)
+    ou = models.FloatField(null=True, blank=True)
+    ml = models.CharField(max_length=20, null=True, blank=True)
     display = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return '{} - {}'.format(self.home_team, self.visit_team)
+        return f'{self.visit_team}@{self.home_team}'
 
 
 class Player(models.Model):
