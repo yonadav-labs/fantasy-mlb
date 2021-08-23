@@ -22,13 +22,13 @@
             <th style="width: 100px;">Time</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-model="Game">
           {% for game in games %}
-          <tr>
+          <tr data-id="{{game.id}}">
             <td class="align-middle">{{game.visit_team}}</td>
             <td class="align-middle">{{game.home_team}}</td>
-            <td><input type="text" class="form-control" value="{{game.ou}}"></td>
-            <td><input type="text" class="form-control" value="{{game.time}}"></td>
+            <td data-field="ou"><input type="text" class="form-control" value="{{game.ou}}"></td>
+            <td data-field="time"><input type="text" class="form-control" value="{{game.time}}"></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -56,20 +56,20 @@
             <th style="width: 50px;">Conf</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-model="Player">
           {% for player in players %}
-          <tr>
+          <tr data-id="{{player.id}}">
             <td class="align-middle">{{player.first_name}} {{player.first_name}}</td>
             <td class="align-middle">{{player.rid}}</td>
             <td class="align-middle">{{player.team}}</td>
             <td class="align-middle">{{player.opponent}}</td>
-            <td><input type="text" class="form-control" value="{{player.actual_position}}"></td>
-            <td><input type="text" class="form-control" value="{{player.handedness}}"></td>
-            <td><input type="text" class="form-control" value="{{player.start}}"></td>
-            <td><input type="number" step="1" class="form-control" value="{{player.salary}}"></td>
-            <td><input type="number" class="form-control" value="{{player.proj_points}}"></td>
-            <td><input type="text" class="form-control" value="{{player.injury}}"></td>
-            <td class="align-middle text-center"><input type="checkbox" class="form-check-input1" value="{{player.injury}}"></td>
+            <td data-field="actual_position"><input type="text" class="form-control" value="{{player.actual_position}}"></td>
+            <td data-field="handedness"><input type="text" class="form-control" value="{{player.handedness}}"></td>
+            <td data-field="start"><input type="text" class="form-control" value="{{player.start}}"></td>
+            <td data-field="salary"><input type="number" step="1" class="form-control" value="{{player.salary}}"></td>
+            <td data-field="proj_points"><input type="number" class="form-control" value="{{player.proj_points}}"></td>
+            <td data-field="injury"><input type="text" class="form-control" value="{{player.injury}}"></td>
+            <td data-field="start_status" class="align-middle text-center"><input type="checkbox" checked="{{player.start_status}}"></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -79,6 +79,15 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <script type="text/javascript">
+    $('input').change(function() {
+      var model = $(this).parents('tbody').data('model');
+      var id = $(this).parents('tr').data('id');
+      var field = $(this).parent().data('field');
+      var val = $(this).val();
+      var data = { model, id, field, val };
+
+      $.post( "/update-field/", data, function( data ) {});
+    })
   </script>
 </body>
 </html>
