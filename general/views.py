@@ -377,6 +377,14 @@ def export_manual_lineup(request):
 
 @staff_member_required
 def upload_data(request):
+    # slate = Slate.objects.filter(data_source="DraftKings").first()
+    # games = Game.objects.filter(slate=slate)
+    # players = Player.objects.filter(slate=slate)
+
+    # last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
+
+    # return render(request, 'edit-slate.html', locals())
+
     if request.method == 'GET':
         today = datetime.datetime.now().strftime('%m/%d/%Y')
         return render(request, 'upload-slate.html', locals())
@@ -395,8 +403,6 @@ def upload_data(request):
         # TODO: add validation
         games = load_games(slate, players_info)
         players = load_players(slate, players_info, projection_info)
-        print(games)
-        print(players)
         # except Exception:
         #     pass
 

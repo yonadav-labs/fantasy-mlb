@@ -6,25 +6,79 @@
 </head>
 <body>
   <div class="container">
-    <div class="mx-auto mt-5 pt-5" style="width: 600px;">
-      <h4 class="text-center text-success my-4">UPLOAD SLATE (<span class="text-body">{{today}}</span>)</h4>
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div>{{slate}}</div>
-        <div>{{data_source}}</div>
-        <div>{{last_updated}}</div>
-        <div>{{fields}}</div>
-        <button type="submit" class="btn btn-primary float-right mt-4">Confirm</button>
-      </form>
+    <div class="mt-4">
+      <strong>Slate:</strong> {{slate.name}} ({{slate.data_source}})
+      <strong class="ml-3">Last Updated:</strong> {{last_updated}}
+    </div>
+
+    <div class="mt-5" style="width: 360px;">
+      <h4 class="text-primary my-4">Game Information</h4>
+      <table class="table table-striped table-hover table-sm">
+        <thead style="height: 40px;">
+          <tr>
+            <th>Visit</th>
+            <th>Home</th>
+            <th style="width: 100px;">O/U</th>
+            <th style="width: 100px;">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for game in games %}
+          <tr>
+            <td class="align-middle">{{game.visit_team}}</td>
+            <td class="align-middle">{{game.home_team}}</td>
+            <td><input type="text" class="form-control" value="{{game.ou}}"></td>
+            <td><input type="text" class="form-control" value="{{game.time}}"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mb-4">
+      <h4 class="text-primary my-4">Player Information</h4>
+    </div>
+
+    <div class="mb-5" style="height: 760px; overflow-y: scroll;">
+      <table class="table table-hover table-sm">
+        <thead style="height: 40px;">
+          <tr>
+            <th style="width: 180px;">Name</th>
+            <th>ID</th>
+            <th>Team</th>
+            <th>Opp</th>
+            <th style="width: 100px;">Position</th>
+            <th style="width: 80px;">Hand</th>
+            <th style="width: 80px;">Ord</th>
+            <th style="width: 100px;">Salary</th>
+            <th style="width: 100px;">Projection</th>
+            <th style="width: 100px;">Injury</th>
+            <th style="width: 50px;">Conf</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in players %}
+          <tr>
+            <td class="align-middle">{{player.first_name}} {{player.first_name}}</td>
+            <td class="align-middle">{{player.rid}}</td>
+            <td class="align-middle">{{player.team}}</td>
+            <td class="align-middle">{{player.opponent}}</td>
+            <td><input type="text" class="form-control" value="{{player.actual_position}}"></td>
+            <td><input type="text" class="form-control" value="{{player.handedness}}"></td>
+            <td><input type="text" class="form-control" value="{{player.start}}"></td>
+            <td><input type="number" step="1" class="form-control" value="{{player.salary}}"></td>
+            <td><input type="number" class="form-control" value="{{player.proj_points}}"></td>
+            <td><input type="text" class="form-control" value="{{player.injury}}"></td>
+            <td class="align-middle text-center"><input type="checkbox" class="form-check-input1" value="{{player.injury}}"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <script type="text/javascript">
-    $(".custom-file-input").on("change", function() {
-      var fileName = $(this).val().split("\\").pop();
-      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
   </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ def get_slate(name, data_source):
 
 
 def load_players(slate, players_info, projection_info):
+    # TODO: take care of projection_info
     players = []
     for player_info in players_info:
         if slate.data_source == 'DraftKings':
@@ -24,7 +25,7 @@ def load_players(slate, players_info, projection_info):
                                                         actual_position=player_info['Position'],
                                                         position=player_info['Roster Position'],
                                                         proj_points=player_info['AvgPointsPerGame'],
-                                                        salary=player_info['Salary']
+                                                        salary=player_info['Salary'] or 0
                                                         )
         elif slate.data_source == 'FanDuel':
             visit_team, home_team, _ = parse_game_info(slate.data_source, player_info['Game'])
@@ -39,7 +40,7 @@ def load_players(slate, players_info, projection_info):
                                                         actual_position=player_info['Position'],
                                                         position=player_info['Roster Position'],
                                                         proj_points=proj_points,
-                                                        salary=player_info['Salary'],
+                                                        salary=player_info['Salary'] or 0,
                                                         injury=player_info['Injury Details']
                                                         )
         players.append(player)

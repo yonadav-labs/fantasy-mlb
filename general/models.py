@@ -13,18 +13,18 @@ class Slate(models.Model):
     name = models.CharField(max_length=120)
 
     def __str__(self):
-        return f'{self.name} - [{self.data_source}]'
+        return self.name
 
 
 class Game(models.Model):
     slate = models.ForeignKey(Slate, on_delete=models.CASCADE, related_name="games")
     home_team = models.CharField(max_length=20)
     visit_team = models.CharField(max_length=20)
-    time = models.TimeField(null=True, blank=True)
+    time = models.CharField(max_length=20, null=True, blank=True, default="")
     home_score = models.CharField(max_length=50, null=True, blank=True)
     visit_score = models.CharField(max_length=50, null=True, blank=True)
-    ou = models.FloatField(null=True, blank=True)
-    ml = models.CharField(max_length=20, null=True, blank=True)
+    ou = models.FloatField(default=0)
+    ml = models.CharField(max_length=20, null=True, blank=True, default="")
     display = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -38,19 +38,19 @@ class Player(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
-    injury = models.CharField(max_length=250, blank=True, null=True)
-    opponent = models.CharField(max_length=50, blank=True, null=True)
+    injury = models.CharField(max_length=250, blank=True, null=True, default="")
+    opponent = models.CharField(max_length=50, blank=True, null=True, default="")
     position = models.CharField(max_length=50)
     actual_position = models.CharField(max_length=50)
     proj_points = models.FloatField()
     proj_delta = models.FloatField(default=0)
-    salary = models.FloatField()
+    salary = models.IntegerField(default=0)
     team = models.CharField(max_length=50)
     play_today = models.BooleanField(default=False)
     opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
-    handedness = models.CharField(max_length=5, blank=True, null=True)
-    start = models.CharField(max_length=5, blank=True, null=True)
-    start_status = models.CharField(max_length=5, blank=True, null=True)
+    handedness = models.CharField(max_length=5, blank=True, null=True, default="")
+    start = models.CharField(max_length=5, blank=True, null=True, default="")
+    start_status = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -64,7 +64,7 @@ class BaseGame(models.Model):
     visit_team = models.CharField(max_length=20)
     home_score = models.CharField(max_length=50, null=True, blank=True)
     visit_score = models.CharField(max_length=50, null=True, blank=True)
-    ou = models.FloatField()
+    ou = models.FloatField(default=0)
     ml = models.CharField(max_length=20)
     updated_at = models.DateTimeField(auto_now=True)
 
