@@ -1,7 +1,9 @@
 import csv
 import random
 
-from datetime import datetime
+
+def mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
 
 
 def csv_to_list(csv_reader):
