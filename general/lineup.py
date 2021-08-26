@@ -1,8 +1,9 @@
 import operator as op
 from ortools.linear_solver import pywraplp
-from .models import *
 
-import pdb
+from .models import *
+from .constants import POSITION_LIMITS, ROSTER_SIZE, TEAM_LIMIT
+
 class Roster:
     POSITION_ORDER = {
         "P": 0,
@@ -64,36 +65,6 @@ class Roster:
         s += "\tCost: $%s" % self.spent()
         return s
 
-
-POSITION_LIMITS = {
-    'FanDuel': [
-        ["P", 1, 1],
-        ["C", 1, 2],
-        ["2B", 1, 2],
-        ["3B", 1, 2],
-        ["SS", 1, 2],
-        ["OF", 3, 4]
-    ],
-    'DraftKings': [
-        ["P", 2, 2],
-        ["C", 1, 1],
-        ["1B", 1, 1],
-        ["2B", 1, 1],
-        ["3B", 1, 1],
-        ["SS", 1, 1],
-        ["OF", 3, 3]
-    ]
-}
-
-ROSTER_SIZE = {
-    'FanDuel': 9,
-    'DraftKings': 10,
-}
-
-TEAM_LIMIT = {
-    'FanDuel': 2,
-    'DraftKings': 2
-}
 
 def get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, max_salary, _team_stack):
     solver = pywraplp.Solver('mlb-lineup', pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
@@ -171,8 +142,10 @@ def get_num_lineups(player, lineups):
             num = num + 1
     return num
 
+
 def get_exposure(players, lineups):
     return { ii.id: get_num_lineups(ii, lineups) for ii in players }
+
 
 def get_percent_team(lineups, team, team_info):
     num = 0
@@ -185,6 +158,7 @@ def get_percent_team(lineups, team, team_info):
             num += 1
     return num
 
+
 def check_batter_vs_pitcher(roster):
     opp_pitcher_ids = [ii.opp_pitcher_id for ii in roster.players if ii.opp_pitcher_id]
     for ii in roster.players:
@@ -192,8 +166,8 @@ def check_batter_vs_pitcher(roster):
             return False
     return True
 
-def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, exposure, cus_proj, no_batter_vs_pitcher):
 
+def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team_stack, exposure, cus_proj, no_batter_vs_pitcher):
     # preprocess players
     con_mul = []
     players_ = []
@@ -216,7 +190,6 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
     max_point = 10000
     exposure_d = { ii['id']: ii for ii in exposure }
     ban = []
-    # pdb.set_trace()
 
     for team, team_info in _team_stack.items():
         if team_info['min'] == 0:
@@ -240,14 +213,12 @@ def calc_lineups(players, num_lineups, locked, ds, min_salary, max_salary, _team
                         'percent': _team_info['percent']
                     }
 
-            # pdb.set_trace()
             # check and update all users' status
             cur_exps = get_exposure(players, result)
             for pid, exp in cur_exps.items():
                 if exp >= exposure_d[pid]['max'] and pid not in ban:
                     ban.append(pid)
 
-            # pdb.set_trace()
             roster = get_lineup(ds, players, locked, ban, max_point, con_mul, min_salary, 
                                 max_salary, __team_stack)
 

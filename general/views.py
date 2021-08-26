@@ -194,7 +194,6 @@ def get_players(request):
     players = []
 
     cus_proj = request.session.get('cus_proj', {})
-    # import pdb; pdb.set_trace()
     for ii in Player.objects.filter(slate=slate, team__in=teams):
         player = model_to_dict(ii, fields=['id', 'injury', 'avatar', 'salary', 'team',
                                            'actual_position', 'first_name', 'last_name',
