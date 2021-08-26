@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^export-mlineup', export_manual_lineup, name="export_manual_lineup"),
     url(r'^get-players', get_players, name="get_players"),
     url(r'^get-games', get_games, name="get_games"),
+    url(r'^get-slates', get_slates, name="get_slates"),
     url(r'^upload-data$', upload_data),
     url(r'^trigger-scraper', trigger_scraper, name="trigger_scraper"),
     url(r'^update-point', update_point, name="update_point"),

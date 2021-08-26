@@ -33,7 +33,8 @@ class Roster:
         return sum(map(lambda x: getattr(x, 'salary'), self.players))
 
     def projected(self):
-        return sum(map(lambda x: getattr(x, 'proj_points'), self.players))
+        val = sum(map(lambda x: getattr(x, 'proj_points'), self.players))
+        return float(f'{val:.2f}')
 
     def position_order(self, player):
         return self.POSITION_ORDER[player.position]

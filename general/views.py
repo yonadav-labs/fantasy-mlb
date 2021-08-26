@@ -178,7 +178,9 @@ def build_lineup(request):
 
 @csrf_exempt
 def get_players(request):
-    ds = request.POST.get('ds')
+    slate_id = request.POST.get('slate_id')
+    slate = Slate.objects.get(pk=slate_id)
+    ds = slate.data_source
     order = request.POST.get('order', 'proj_points')
     if order == '-':
         order = 'proj_points'
@@ -191,8 +193,8 @@ def get_players(request):
     players = []
 
     cus_proj = request.session.get('cus_proj', {})
-
-    for ii in Player.objects.filter(data_source=ds, team__in=teams, play_today=True):
+    # import pdb; pdb.set_trace()
+    for ii in Player.objects.filter(slate=slate, team__in=teams):
         player = model_to_dict(ii, fields=['id', 'injury', 'avatar', 'salary', 'team',
                                            'actual_position', 'first_name', 'last_name',
                                            'handedness', 'start', 'start_status', 'opponent'])
@@ -442,9 +444,16 @@ def trigger_scraper(request):
 
 @csrf_exempt
 def get_games(request):
+    slate_id = request.POST.get('slate_id')
+    games = Game.objects.filter(slate_id=slate_id)
+    return render(request, 'game-list.html', locals())
+
+
+@csrf_exempt
+def get_slates(request):
     ds = request.POST.get('ds')
-    games = Game.objects.filter(data_source=ds, display=True)
-    return render(request, 'game-slates.html', locals())
+    slates = Slate.objects.filter(data_source=ds)
+    return render(request, 'slate-list.html', locals())
 
 
 def _get_lineups(request):

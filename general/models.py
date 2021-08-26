@@ -35,6 +35,7 @@ class Game(models.Model):
 class Player(models.Model):
     slate = models.ForeignKey(Slate, on_delete=models.CASCADE, related_name="players")
     rid = models.CharField(max_length=100)
+    uid = models.IntegerField(default=-1)  # roto id
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
