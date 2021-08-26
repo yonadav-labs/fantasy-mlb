@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.forms.models import model_to_dict
+from django.apps import apps
 
 from general.models import *
 from general.lineup import *
@@ -377,13 +378,13 @@ def export_manual_lineup(request):
 
 @staff_member_required
 def upload_data(request):
-    # slate = Slate.objects.filter(data_source="DraftKings").first()
-    # games = Game.objects.filter(slate=slate)
-    # players = Player.objects.filter(slate=slate)
+    slate = Slate.objects.filter(data_source="DraftKings").first()
+    games = Game.objects.filter(slate=slate)
+    players = Player.objects.filter(slate=slate)
 
-    # last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
+    last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
 
-    # return render(request, 'edit-slate.html', locals())
+    return render(request, 'edit-slate.html', locals())
 
     if request.method == 'GET':
         today = datetime.datetime.now().strftime('%m/%d/%Y')
@@ -409,6 +410,23 @@ def upload_data(request):
         last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
 
         return render(request, 'edit-slate.html', locals())
+
+
+@staff_member_required
+@csrf_exempt
+def update_field(request):
+    data = request.POST
+    model_name = data.get('model')
+    id = data.get('id')
+    field = data.get('field')
+    val = data.get('val')
+
+    model_cls = apps.get_model('general', model_name)
+    model = model_cls.objects.get(pk=id)
+    setattr(model, field, val)
+    model.save()
+
+    return HttpResponse()
 
 
 @staff_member_required

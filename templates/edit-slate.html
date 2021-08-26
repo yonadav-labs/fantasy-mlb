@@ -86,7 +86,7 @@
       var val = $(this).val();
       var data = { model, id, field, val };
 
-      $.post( "/update-field/", data, function( data ) {});
+      $.post( "/update-field", data, function( data ) {});
     })
   </script>
 </body>
