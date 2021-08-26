@@ -59,7 +59,7 @@
         <tbody data-model="Player">
           {% for player in players %}
           <tr data-id="{{player.id}}">
-            <td class="align-middle">{{player.first_name}} {{player.first_name}}</td>
+            <td class="align-middle">{{player.first_name}} {{player.last_name}}</td>
             <td class="align-middle">{{player.rid}}</td>
             <td class="align-middle">{{player.team}}</td>
             <td class="align-middle">{{player.opponent}}</td>
@@ -69,7 +69,7 @@
             <td data-field="salary"><input type="number" step="1" class="form-control" value="{{player.salary}}"></td>
             <td data-field="proj_points"><input type="number" class="form-control" value="{{player.proj_points}}"></td>
             <td data-field="injury"><input type="text" class="form-control" value="{{player.injury}}"></td>
-            <td data-field="start_status" class="align-middle text-center"><input type="checkbox" checked="{{player.start_status}}"></td>
+            <td data-field="start_status" class="align-middle text-center"><input class="checkbox" type="checkbox" {% if player.start_status %}checked{% endif %}></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -84,6 +84,11 @@
       var id = $(this).parents('tr').data('id');
       var field = $(this).parent().data('field');
       var val = $(this).val();
+
+      if ($(this).hasClass('checkbox')) {
+        val = $(this).prop('checked');
+      }
+
       var data = { model, id, field, val };
 
       $.post( "/update-field", data, function( data ) {});

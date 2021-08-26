@@ -382,7 +382,7 @@ def update_field(request):
     model_name = data.get('model')
     id = data.get('id')
     field = data.get('field')
-    val = data.get('val')
+    val = data.get('val') if field != 'start_status' else data.get('val') == 'true'
 
     model_cls = apps.get_model('general', model_name)
     model = model_cls.objects.get(pk=id)
