@@ -15,7 +15,6 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.forms.models import model_to_dict
 from django.apps import apps
-from fuzzywuzzy import process
 
 from general.models import *
 from general.lineup import *
@@ -341,7 +340,7 @@ def export_manual_lineup(request):
 
 @staff_member_required
 def upload_data(request):
-    slate = Slate.objects.filter(data_source="DraftKings").first()
+    slate = Slate.objects.filter(data_source="FanDuel").first()
     games = Game.objects.filter(slate=slate)
     players = Player.objects.filter(slate=slate)
 
