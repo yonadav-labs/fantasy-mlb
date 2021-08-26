@@ -15,11 +15,12 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.forms.models import model_to_dict
 from django.apps import apps
+from fuzzywuzzy import process
 
 from general.models import *
 from general.lineup import *
 from general.dao import get_slate, load_games, load_players
-from general.utils import parse_players_csv, parse_projection_csv
+from general.utils import parse_players_csv, parse_projection_csv, mean
 from general.constants import CSV_FIELDS, SALARY_CAP, TEAM_MEMEBER_LIMIT
 from scripts.roto_games import fetch_games
 from scripts.roto_players import fetch_players
@@ -217,46 +218,6 @@ def get_players(request):
     }
 
     return JsonResponse(result, safe=False)
-
-
-def current_season():
-    today = datetime.date.today()
-    return today.year if today > datetime.date(today.year, 10, 17) else today.year - 1
-
-
-def formated_diff(val):
-    fm = '{:.1f}' if val > 0 else '({:.1f})'
-    return fm.format(abs(val))
-
-
-def get_ranking(players, sattr, dattr, order=1):
-    # order = 1: ascending, -1: descending
-    players = sorted(players, key=lambda k: k[sattr]*order)
-    ranking = 0
-    prev_val = None
-    for ii in players:
-        if ii[sattr] != prev_val:
-            prev_val = ii[sattr]
-            ranking += 1
-        ii[dattr] = ranking
-    return players, ranking
-
-
-def get_player(full_name, team):
-    '''
-    FanDuel has top priority
-    '''
-    names = full_name.split(' ')
-    players = Player.objects.filter(first_name=names[0], last_name=names[1], team=team) \
-                            .order_by('data_source')
-    player = players.filter(data_source='FanDuel').first()
-    if not player:
-        player = players.first()
-    return player
-
-
-def mean(numbers):
-    return float(sum(numbers)) / max(len(numbers), 1)
 
 
 def get_num_lineups(player, lineups):
