@@ -164,6 +164,7 @@ def build_lineup(request):
             player = {}
         players.append({ 'pos':ii['pos'], 'player': player })
 
+    sum_proj = f'{sum_proj:.2f}'
     rem = (SALARY_CAP[ds] - sum_salary) / (ROSTER_SIZE[ds] - num_players) if ROSTER_SIZE[ds] != num_players else 0
     full = num_players == ROSTER_SIZE[ds]
 
