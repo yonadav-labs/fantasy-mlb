@@ -360,6 +360,7 @@ def upload_data(request):
         try:
             projection_file = request.FILES['projection_file']
             projection_info = parse_projection_csv(projection_file)
+            projection_info = [f"{row['name']} @#@{row['projection'] or 0}" for row in projection_info]
         except Exception:
             err_msg = 'Projection file is invalid'
             return render(request, 'upload-slate.html', locals())

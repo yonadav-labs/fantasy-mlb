@@ -17,7 +17,7 @@ def csv_to_list(csv_reader):
 def parse_players_csv(file, data_source):
     """
     :param file: stream
-    :return: list
+    :return: list(dict)
     """
     decoded_file = file.read().decode('utf-8').splitlines()
     net_data = []
@@ -39,7 +39,7 @@ def parse_players_csv(file, data_source):
 
 def parse_projection_csv(file):
     """
-    :return: list
+    :return: list(dict)
     """
     decoded_file = file.read().decode('utf-8').splitlines()
     reader = csv.DictReader(decoded_file)
@@ -70,7 +70,7 @@ def parse_game_info(data_source, game_info):
     return visit_team, home_team, time
 
 
-def get_delta(ii, ds):
+def get_delta(ii=None, ds=None):
     factor = (-10, 10)
     sign = 1 if random.randrange(0, 2) else -1
     delta = random.randrange(factor[0], factor[1]) / 10.0
