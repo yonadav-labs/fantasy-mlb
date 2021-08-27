@@ -34,6 +34,7 @@ def fetch_players(data_source, data_source_id):
                 'first_name': player['first_name'],
                 'last_name': player['last_name'],
                 'team': player['team'],
+                'opp_pitcher_id': player['opp_pitcher_id'],
                 'start': '-' if player['lineup_status'] == 'Yes' else player['lineup_status'],
                 'handedness': html2text.html2text(player['handedness']).strip().replace('B', 'S'),
                 'start_status': html2text.html2text(player['team_lineup_status']).strip().replace('E', 'P'),

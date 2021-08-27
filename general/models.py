@@ -61,10 +61,10 @@ class Player(models.Model):
 class BaseGame(models.Model):
     data_source = models.CharField(max_length=30, choices=DATA_SOURCE, default='FanDuel')
     time = models.TimeField()
-    home_team = models.CharField(max_length=20)
     visit_team = models.CharField(max_length=20)
-    home_score = models.CharField(max_length=50, null=True, blank=True)
+    home_team = models.CharField(max_length=20)
     visit_score = models.CharField(max_length=50, null=True, blank=True)
+    home_score = models.CharField(max_length=50, null=True, blank=True)
     ou = models.FloatField(default=0)
     ml = models.CharField(max_length=20)
     updated_at = models.DateTimeField(auto_now=True)
@@ -80,8 +80,9 @@ class BasePlayer(models.Model):
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
     team = models.CharField(max_length=50)
-    injury = models.CharField(max_length=250, blank=True, null=True)  # from FD
+    injury = models.CharField(max_length=250, blank=True, null=True, default='')  # from FD
     handedness = models.CharField(max_length=5, blank=True, null=True)
+    opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
     start = models.CharField('Order', max_length=5, blank=True, null=True)
     start_status = models.CharField('Confirm', max_length=5, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
