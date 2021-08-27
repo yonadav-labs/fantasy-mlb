@@ -80,7 +80,7 @@ class BasePlayer(models.Model):
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
     team = models.CharField(max_length=50)
-    injury = models.CharField(max_length=250, blank=True, null=True, default='')  # from FD
+    injury = models.CharField(max_length=250, blank=True, default='')  # from FD
     handedness = models.CharField(max_length=5, blank=True, null=True)
     opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
     start = models.CharField('Order', max_length=5, blank=True, null=True)

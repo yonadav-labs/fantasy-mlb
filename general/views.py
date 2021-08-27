@@ -352,22 +352,26 @@ def upload_data(request):
         today = datetime.datetime.now().strftime('%m/%d/%Y')
         return render(request, 'upload-slate.html', locals())
     else:
-        slate_name = request.POST.get('slate')
-        data_source = request.POST.get('data_source')
+        slate_name = request.POST.get('slate', '')
+        data_source = request.POST.get('data_source', '')
         slate = get_slate(slate_name, data_source)
 
-        # try:
-        players_file = request.FILES['players_file']
-        players_info = parse_players_csv(players_file, data_source)
+        err_msg = ''
+        try:
+            projection_file = request.FILES['projection_file']
+            projection_info = parse_projection_csv(projection_file)
+        except Exception:
+            err_msg = 'Projection file is invalid'
+            return render(request, 'upload-slate.html', locals())
 
-        projection_file = request.FILES['projection_file']
-        projection_info = parse_projection_csv(projection_file)
-
-        # TODO: add validation
-        games = load_games(slate, players_info)
-        players = load_players(slate, players_info, projection_info)
-        # except Exception:
-        #     pass
+        try:
+            players_file = request.FILES['players_file']
+            players_info = parse_players_csv(players_file, data_source)
+            games = load_games(slate, players_info)
+            players = load_players(slate, players_info, projection_info)
+        except Exception:
+            err_msg = 'Player file is invalid'
+            return render(request, 'upload-slate.html', locals())
 
         last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
 
