@@ -29,7 +29,7 @@ def get_custom_projection(name, player_names):
     proj = match[0].split('@#@')[1]
     proj = float(proj) + get_delta()
 
-    return proj
+    return max(proj, 0)
 
 
 def load_players(slate, players_info, projection_info):
