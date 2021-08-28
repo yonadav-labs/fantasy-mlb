@@ -3,6 +3,13 @@
 <head>
   <title>GREEN LIGHT DFS</title>
   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
+
+  <style>
+    td {
+      padding: 0.3rem !important;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -39,21 +46,21 @@
       <h4 class="text-primary my-4">Player Information</h4>
     </div>
 
-    <div class="mb-5" style="height: 760px; overflow-y: scroll;">
-      <table class="table table-hover table-sm">
+    <div class="mb-5">
+      <table class="table table-hover table-sm" id="table-players" data-page-length='25'>
         <thead style="height: 40px;">
           <tr>
-            <th style="width: 180px;">Name</th>
-            <th>ID</th>
+            <th data-width='180'>Name</th>
+            <th data-orderable='false' data-width='120'>ID</th>
             <th>Team</th>
-            <th>Opp</th>
-            <th style="width: 100px;">Position</th>
-            <th style="width: 80px;">Hand</th>
-            <th style="width: 80px;">Ord</th>
-            <th style="width: 100px;">Salary</th>
-            <th style="width: 100px;">Projection</th>
-            <th style="width: 100px;">Injury</th>
-            <th style="width: 50px;">Conf</th>
+            <th data-orderable='false'>Opp</th>
+            <th data-orderable='false' data-width='80'>Position</th>
+            <th data-orderable='false' data-width='60'>Hand</th>
+            <th data-orderable='false' data-width='80'>Ord</th>
+            <th data-orderable='false' data-width='75'>Salary</th>
+            <th data-orderable='false' data-width='75'>FPTS</th>
+            <th data-orderable='false' data-width='100'>Injury</th>
+            <th data-orderable='false' data-width='40'>Conf</th>
           </tr>
         </thead>
         <tbody data-model="Player">
@@ -77,22 +84,27 @@
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="//cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
 
   <script type="text/javascript">
-    $('input').change(function() {
-      var model = $(this).parents('tbody').data('model');
-      var id = $(this).parents('tr').data('id');
-      var field = $(this).parent().data('field');
-      var val = $(this).val();
+    $(document).ready( function () {
+      $('#table-players').DataTable();
 
-      if ($(this).hasClass('checkbox')) {
-        val = $(this).prop('checked');
-      }
+      $('td input').change(function() {
+        var model = $(this).parents('tbody').data('model');
+        var id = $(this).parents('tr').data('id');
+        var field = $(this).parent().data('field');
+        var val = $(this).val();
 
-      var data = { model, id, field, val };
+        if ($(this).hasClass('checkbox')) {
+          val = $(this).prop('checked');
+        }
 
-      $.post( "/update-field", data, function( data ) {});
-    })
+        var data = { model, id, field, val };
+
+        $.post( "/update-field", data, function( data ) {});
+      })
+    });
   </script>
 </body>
 </html>

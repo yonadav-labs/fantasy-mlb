@@ -38,6 +38,10 @@ $(function() {
     getPlayers('-');
   });
 
+  $("body").on('change', '#id-slate', function() {
+    getGames();
+  })
+
   // change tab
   $('.nav-tabs.ds .nav-link').click(function () {
     ds = $(this).text();
