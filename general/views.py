@@ -340,7 +340,7 @@ def export_manual_lineup(request):
 
 @staff_member_required
 def load_slate(request, slate_id):
-    slate = Slate.objects.filter(pk=slate_id)
+    slate = Slate.objects.get(pk=slate_id)
     games = Game.objects.filter(slate=slate)
     players = Player.objects.filter(slate=slate)
 
