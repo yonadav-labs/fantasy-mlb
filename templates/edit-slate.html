@@ -74,7 +74,7 @@
             <td data-field="handedness"><input type="text" class="form-control" value="{{player.handedness}}"></td>
             <td data-field="start"><input type="text" class="form-control" value="{{player.start}}"></td>
             <td data-field="salary"><input type="number" step="1" class="form-control" value="{{player.salary}}"></td>
-            <td data-field="proj_points"><input type="number" class="form-control" value="{{player.proj_points}}"></td>
+            <td data-field="proj_points"><input type="number" class="form-control" min="0" value="{{player.proj_points}}"></td>
             <td data-field="injury"><input type="text" class="form-control" value="{{player.injury}}"></td>
             <td data-field="start_status" class="align-middle text-center"><input class="checkbox" type="checkbox" {% if player.start_status %}checked{% endif %}></td>
           </tr>

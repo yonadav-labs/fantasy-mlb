@@ -70,24 +70,12 @@ def parse_game_info(data_source, game_info):
     return visit_team, home_team, time
 
 
-def get_delta(ii=None, ds=None):
+def get_delta(proj):
+    if proj == 0:
+        return 0
+
     factor = (-10, 10)
     sign = 1 if random.randrange(0, 2) else -1
     delta = random.randrange(factor[0], factor[1]) / 10.0
-
-    return delta * sign
-
-    if not float(ii['proj_points']):
-        factor = (0, 1)
-    elif 'P' in ii['position']:
-        factor = (3, 20)
-    else:
-        factor = (1, 9)
-    sign = 1 if random.randrange(0, 2) else -1
-    delta = random.randrange(factor[0], factor[1]) / 10.0
-
-    # if ds != 'DraftKings':
-    #     player = BasePlayer.objects.filter(data_source='DraftKings', uid=ii['id']).first()
-    #     sign = 1 if player and player.proj_delta > 0 else -1
 
     return delta * sign

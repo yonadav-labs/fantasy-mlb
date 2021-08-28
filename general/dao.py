@@ -27,9 +27,9 @@ def get_base_player(name, player_names):
 def get_custom_projection(name, player_names):
     match = process.extractOne(name, player_names, scorer=fuzz.token_sort_ratio)
     proj = match[0].split('@#@')[1]
-    proj = float(proj) + get_delta()
+    proj = float(proj) + get_delta(float(proj))
 
-    return max(proj, 0)
+    return proj
 
 
 def load_players(slate, players_info, projection_info):
