@@ -89,22 +89,22 @@
   <script type="text/javascript">
     $(document).ready( function () {
       $('#table-players').DataTable();
-
-      $('td input').change(function() {
-        var model = $(this).parents('tbody').data('model');
-        var id = $(this).parents('tr').data('id');
-        var field = $(this).parent().data('field');
-        var val = $(this).val();
-
-        if ($(this).hasClass('checkbox')) {
-          val = $(this).prop('checked');
-        }
-
-        var data = { model, id, field, val };
-
-        $.post( "/update-field", data, function( data ) {});
-      })
     });
+
+    $("body").on('change', 'td input', function() {
+      var model = $(this).parents('tbody').data('model');
+      var id = $(this).parents('tr').data('id');
+      var field = $(this).parent().data('field');
+      var val = $(this).val();
+
+      if ($(this).hasClass('checkbox')) {
+        val = $(this).prop('checked');
+      }
+
+      var data = { model, id, field, val };
+
+      $.post( "/update-field", data, function( data ) {});
+    })
   </script>
 </body>
 </html>
