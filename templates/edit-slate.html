@@ -46,8 +46,8 @@
       <h4 class="text-primary my-4">Player Information</h4>
     </div>
 
-    <div class="mb-5">
-      <table class="table table-hover table-sm" id="table-players" data-page-length='25'>
+    <div class="mb-5" style="height: 700px; overflow-y: scroll;">
+      <table class="table table-hover table-sm" id="table-players">
         <thead style="height: 40px;">
           <tr>
             <th data-width='180'>Name</th>
@@ -88,7 +88,9 @@
 
   <script type="text/javascript">
     $(document).ready( function () {
-      $('#table-players').DataTable();
+      $('#table-players').DataTable({
+        paging: false
+      });
     });
 
     $("body").on('change', 'td input', function() {
