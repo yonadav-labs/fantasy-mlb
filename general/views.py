@@ -339,17 +339,23 @@ def export_manual_lineup(request):
 
 
 @staff_member_required
+def load_slate(request, slate_id):
+    slate = Slate.objects.filter(pk=slate_id)
+    games = Game.objects.filter(slate=slate)
+    players = Player.objects.filter(slate=slate)
+
+    last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
+
+    return render(request, 'edit-slate.html', locals())
+
+
+@staff_member_required
 def upload_data(request):
-    # slate = Slate.objects.filter(data_source="FanDuel").first()
-    # games = Game.objects.filter(slate=slate)
-    # players = Player.objects.filter(slate=slate)
-
-    # last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
-
-    # return render(request, 'edit-slate.html', locals())
-
     if request.method == 'GET':
         today = datetime.datetime.now().strftime('%m/%d/%Y')
+        fd_slates = Slate.objects.filter(data_source="FanDuel")
+        dk_slates = Slate.objects.filter(data_source="DraftKings")
+
         return render(request, 'upload-slate.html', locals())
     else:
         slate_name = request.POST.get('slate', '')

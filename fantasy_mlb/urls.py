@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^update-point', update_point, name="update_point"),
     url(r'^update-field', update_field, name="update_field"),
     url(r'^get-team-stack-dlg/(?P<ds>.+)', get_team_stack_dlg, name="get_team_stack_dlg"),
+    url(r'^slates/(?P<slate_id>\d+)', load_slate, name="load_slate"),
 ]

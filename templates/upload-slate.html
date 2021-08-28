@@ -6,8 +6,29 @@
 </head>
 <body>
   <div class="container">
-    <div class="mx-auto mt-5 pt-5" style="width: 600px;">
-      <h4 class="text-center text-success my-4">UPLOAD SLATE (<span class="text-body">{{today}}</span>)</h4>
+    <div class="row" style="width: 600px;">
+      <div class="col-12 mt-4">
+        <h4 class="text-primary my-4">EXISTING SLATES</h4>
+      </div>
+      <div class="col-6">
+        <h5>FanDuel</h5>
+        <ul>
+          {% for slate in fd_slates %}
+          <li><a href="/slates/{{slate.id}}">{{slate.name}}</a></li>
+          {% endfor %}
+        </ul>  
+      </div>
+      <div class="col-6">
+        <h5>DraftKings</h5>
+        <ul>
+          {% for slate in dk_slates %}
+          <li><a href="/slates/{{slate.id}}">{{slate.name}}</a></li>
+          {% endfor %}
+        </ul>  
+      </div>
+    </div>
+    <div class="mt-5" style="width: 600px;">
+      <h4 class="text-success my-4">UPLOAD SLATE (<span class="text-body">{{today}}</span>)</h4>
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
