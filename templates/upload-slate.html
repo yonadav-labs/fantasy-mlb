@@ -27,10 +27,14 @@
         </ul>  
       </div>
     </div>
+    <hr>
     <div class="mt-5" style="width: 600px;">
-      <h4 class="text-success my-4">UPLOAD SLATE (<span class="text-body">{{today}}</span>)</h4>
+      <h4 class="text-primary my-4">UPLOAD SLATE</h4>
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        <div class="form-group">
+          <input type="date" class="form-control" placeholder="Date" name="date" value="{{date}}" required>
+        </div>
         <div class="form-group">
           <select class="form-control" name="data_source" required>
             <option value="">Choose Source</option>

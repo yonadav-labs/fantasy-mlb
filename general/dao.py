@@ -5,8 +5,8 @@ from general.models import Slate, Game, Player, BaseGame, BasePlayer
 from general.utils import parse_name, parse_game_info, get_delta
 
 
-def get_slate(name, data_source):
-    slate, _ = Slate.objects.update_or_create(name=name, data_source=data_source)
+def get_slate(date, name, data_source):
+    slate, _ = Slate.objects.update_or_create(name=name, data_source=data_source, date=date)
     return slate
 
 

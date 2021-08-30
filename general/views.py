@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 import os
 import math
-import datetime
 import mimetypes
+from datetime import datetime
 from wsgiref.util import FileWrapper
 
 from django.shortcuts import render
@@ -352,15 +352,15 @@ def load_slate(request, slate_id):
 @staff_member_required
 def upload_data(request):
     if request.method == 'GET':
-        today = datetime.datetime.now().strftime('%m/%d/%Y')
         fd_slates = Slate.objects.filter(data_source="FanDuel")
         dk_slates = Slate.objects.filter(data_source="DraftKings")
 
         return render(request, 'upload-slate.html', locals())
     else:
-        slate_name = request.POST.get('slate', '')
-        data_source = request.POST.get('data_source', '')
-        slate = get_slate(slate_name, data_source)
+        date = request.POST['date']
+        slate_name = request.POST['slate']
+        data_source = request.POST['data_source']
+        slate = get_slate(date, slate_name, data_source)
 
         err_msg = ''
         try:
@@ -423,7 +423,8 @@ def get_games(request):
 @csrf_exempt
 def get_slates(request):
     ds = request.POST.get('ds')
-    slates = Slate.objects.filter(data_source=ds)
+    today = datetime.now().date()
+    slates = Slate.objects.filter(data_source=ds, date=today)
     return render(request, 'slate-list.html', locals())
 
 
