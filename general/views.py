@@ -352,8 +352,8 @@ def load_slate(request, slate_id):
 @staff_member_required
 def upload_data(request):
     if request.method == 'GET':
-        fd_slates = Slate.objects.filter(data_source="FanDuel")
-        dk_slates = Slate.objects.filter(data_source="DraftKings")
+        fd_slates = Slate.objects.filter(data_source="FanDuel").order_by('date')
+        dk_slates = Slate.objects.filter(data_source="DraftKings").order_by('date')
 
         return render(request, 'upload-slate.html', locals())
     else:
@@ -400,17 +400,6 @@ def update_field(request):
     model.save()
 
     return HttpResponse()
-
-
-@staff_member_required
-@csrf_exempt
-def trigger_scraper(request):
-    Player.objects.all().update(play_today=False)
-    for ds in DATA_SOURCE:
-        fetch_players(ds[0])
-        fetch_games(ds[0])
-
-    return HttpResponse('Completed')
 
 
 @csrf_exempt

@@ -14,7 +14,7 @@
         <h5>FanDuel</h5>
         <ul>
           {% for slate in fd_slates %}
-          <li><a href="/slates/{{slate.id}}">{{slate.name}}</a></li>
+          <li><a href="/slates/{{slate.id}}">{{slate.name}} ({{slate.date}})</a></li>
           {% endfor %}
         </ul>  
       </div>
@@ -22,7 +22,7 @@
         <h5>DraftKings</h5>
         <ul>
           {% for slate in dk_slates %}
-          <li><a href="/slates/{{slate.id}}">{{slate.name}}</a></li>
+          <li><a href="/slates/{{slate.id}}">{{slate.name}} ({{slate.date}})</a></li>
           {% endfor %}
         </ul>  
       </div>
