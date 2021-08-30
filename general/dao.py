@@ -26,10 +26,11 @@ def get_base_player(name, player_names):
 
 def get_custom_projection(name, player_names):
     match = process.extractOne(name, player_names, scorer=fuzz.token_sort_ratio)
-    proj = match[0].split('@#@')[1]
-    proj = float(proj) + get_delta(float(proj))
+    proj_str = match[0].split('@#@')[1]
+    original_proj = float(proj_str)
+    proj = original_proj + get_delta(original_proj)
 
-    return proj
+    return proj, original_proj
 
 
 def load_players(slate, players_info, projection_info):
@@ -45,7 +46,6 @@ def load_players(slate, players_info, projection_info):
             first_name, last_name = parse_name(name)
             game_info = player_info['Game Info']
             team = player_info['TeamAbbrev']
-            # proj_points = player_info['AvgPointsPerGame'] or 0
             actual_position = player_info['Position']
             position = player_info['Roster Position']
             salary = player_info['Salary'] or 0
@@ -57,28 +57,32 @@ def load_players(slate, players_info, projection_info):
             last_name = player_info['Last Name']
             game_info = player_info['Game']
             team = player_info['Team']
-            # proj_points = player_info['FPPG'] or 0
             actual_position = player_info['Position']
             position = player_info['Roster Position']
             salary = player_info['Salary'] or 0
             injury = player_info['Injury Details']
 
         visit_team, home_team, _ = parse_game_info(slate.data_source, game_info)
-        base_player = get_base_player(name, base_names)
-        proj_points = get_custom_projection(name, projection_info)
+        opponent = f'@{home_team}' if visit_team==team else visit_team
 
-        if base_player:
+        proj_points, original_proj = get_custom_projection(name, projection_info)
+
+        if original_proj:
+            base_player = get_base_player(name, base_names)
+            handedness = base_player.handedness
+            start = base_player.start
+            opp_pitcher_id = base_player.opp_pitcher_id
+
             if slate.data_source == 'FanDuel':  # put FD's injury
                 base_player.injury = injury or ''
                 base_player.save()
             else:
                 injury = base_player.injury or ''
+        else:
+            handedness = ''
+            start = ''
+            opp_pitcher_id = None
 
-        handedness = base_player.handedness if base_player else ''
-        start = base_player.start if base_player else ''
-        opp_pitcher_id = base_player.opp_pitcher_id if base_player else None
-
-        opponent = f'@{home_team}' if visit_team==team else visit_team
         player, _ = Player.objects.update_or_create(slate=slate,
                                                     rid=rid,
                                                     first_name=first_name,
@@ -94,7 +98,8 @@ def load_players(slate, players_info, projection_info):
                                                     start=start,
                                                     opp_pitcher_id=opp_pitcher_id
                                                     )
-        players.append(player)
+        if original_proj:
+            players.append(player)
 
     return players
 
