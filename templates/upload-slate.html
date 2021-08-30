@@ -12,7 +12,7 @@
       </div>
       <div class="col-6">
         <h5>FanDuel</h5>
-        <ul>
+        <ul class="pl-4">
           {% for slate in fd_slates %}
           <li><a href="/slates/{{slate.id}}">{{slate.name}} ({{slate.date}})</a></li>
           {% endfor %}
@@ -20,7 +20,7 @@
       </div>
       <div class="col-6">
         <h5>DraftKings</h5>
-        <ul>
+        <ul class="pl-4">
           {% for slate in dk_slates %}
           <li><a href="/slates/{{slate.id}}">{{slate.name}} ({{slate.date}})</a></li>
           {% endfor %}
