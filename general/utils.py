@@ -24,13 +24,11 @@ def parse_players_csv(file, data_source):
 
     if data_source == 'DraftKings':
         row_start = 7
-        col_start = 11
     elif data_source == 'FanDuel':
         row_start = 6
-        col_start = 39
 
     for row in decoded_file[row_start:]:
-        net_data.append(row[col_start:])
+        net_data.append(row)
 
     reader = csv.DictReader(net_data)
 

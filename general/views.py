@@ -371,6 +371,7 @@ def upload_data(request):
             err_msg = 'Projection file is invalid'
             return render(request, 'upload-slate.html', locals())
 
+        import pdb; pdb.set_trace()
         try:
             players_file = request.FILES['players_file']
             players_info = parse_players_csv(players_file, data_source)
