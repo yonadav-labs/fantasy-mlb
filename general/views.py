@@ -412,8 +412,7 @@ def get_games(request):
 @csrf_exempt
 def get_slates(request):
     ds = request.POST.get('ds')
-    today = datetime.now().date()
-    slates = Slate.objects.filter(data_source=ds, date=today)
+    slates = Slate.objects.filter(data_source=ds)
     return render(request, 'slate-list.html', locals())
 
 
