@@ -25,7 +25,7 @@ def parse_players_csv(file, data_source):
     if data_source == 'DraftKings':
         row_start = 7
     elif data_source == 'FanDuel':
-        row_start = 6
+        row_start = 0
 
     for row in decoded_file[row_start:]:
         net_data.append(row)

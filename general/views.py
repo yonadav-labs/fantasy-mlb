@@ -340,9 +340,14 @@ def export_manual_lineup(request):
 
 @staff_member_required
 def load_slate(request, slate_id):
+    load_empty_proj = request.GET.get('emtpy')
     slate = Slate.objects.get(pk=slate_id)
     games = Game.objects.filter(slate=slate)
-    players = Player.objects.filter(slate=slate)
+
+    if load_empty_proj:
+        players = Player.objects.filter(slate=slate, proj_points=0)
+    else:
+        players = Player.objects.filter(slate=slate, proj_points__gt=0)
 
     last_updated = BaseGame.objects.all().order_by('-updated_at').first().updated_at
 
