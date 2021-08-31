@@ -44,7 +44,10 @@
     </div>
 
     <div class="mb-4">
-      <h4 class="text-primary my-4">Player Information</h4>
+      <h4 class="text-primary mt-4 mb-2">Player Information</h4>
+      {% if not load_empty_proj %}
+      <a target="_blank" class="text-body" href="/slates/{{slate.id}}/?emtpy=1">(Players with 0 projection {{request.GET.emtpy}})</a>
+      {% endif %}
     </div>
 
     <div class="mb-5" style="height: 700px; overflow-y: scroll;">
