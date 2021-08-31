@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import os
 import math
 import mimetypes
-from datetime import datetime
 from wsgiref.util import FileWrapper
 
 from django.shortcuts import render
@@ -21,8 +20,6 @@ from general.lineup import *
 from general.dao import get_slate, load_games, load_players
 from general.utils import parse_players_csv, parse_projection_csv, mean
 from general.constants import CSV_FIELDS, SALARY_CAP, TEAM_MEMEBER_LIMIT
-from scripts.roto_games import fetch_games
-from scripts.roto_players import fetch_players
 
 
 def players(request):
