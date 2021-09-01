@@ -44,7 +44,8 @@ def cus_proj_cls(player, session):
 def cus_proj_(player, session):
     if player:
         cus_proj = session.get('cus_proj', {})
-        return cus_proj.get(str(player.id), player.proj_points)
+        proj = cus_proj.get(str(player.id), player.proj_points)
+        return '{:.2f}'.format(proj)
     return ''
 
 
