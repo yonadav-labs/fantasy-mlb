@@ -63,6 +63,8 @@ def load_players(slate, players_info, projection_info):
             injury = player_info['Injury Details']
 
         visit_team, home_team, _ = parse_game_info(slate.data_source, game_info)
+        if not visit_team:
+            continue
         opponent = f'@{home_team}' if visit_team==team else visit_team
 
         proj_points, original_proj = get_custom_projection(name, projection_info)
@@ -114,6 +116,8 @@ def load_games(slate, players_info):
     games = []
     for game_info in games_data:
         visit_team, home_team, time = parse_game_info(slate.data_source, game_info)
+        if not visit_team:
+            continue
         base_game = get_base_game(visit_team, home_team, slate.data_source)
         ou = base_game.ou if base_game else 0
 

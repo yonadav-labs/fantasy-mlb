@@ -57,13 +57,16 @@ def parse_name(name):
 
 
 def parse_game_info(data_source, game_info):
-    if data_source == 'DraftKings':
-        parts = game_info.split(' ')
-        visit_team, home_team = parts[0].split('@')
-        time = parts[2]
-    elif data_source == 'FanDuel':
-        visit_team, home_team = game_info.split('@')
-        time = ""
+    visit_team = home_team = time = ""
+    try:
+        if data_source == 'DraftKings':
+            parts = game_info.split(' ')
+            visit_team, home_team = parts[0].split('@')
+            time = parts[2]
+        elif data_source == 'FanDuel':
+            visit_team, home_team = game_info.split('@')
+    except Exception:
+        pass
 
     return visit_team, home_team, time
 
