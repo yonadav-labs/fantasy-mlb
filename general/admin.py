@@ -21,9 +21,9 @@ class BaseGameAdmin(admin.ModelAdmin):
 
 @admin.register(BasePlayer)
 class BasePlayerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'team', 'uid', 'handedness', 'start', 'start_status', 'injury', 'data_source', 'updated_at']
+    list_display = ['first_name', 'last_name', 'team', 'uid', 'handedness', 'order', 'confirmed', 'injury', 'data_source', 'updated_at']
     search_fields = ['first_name', 'last_name']
-    list_filter = ['team', 'data_source']
+    list_filter = ['team', 'data_source', 'confirmed']
 
 
 @admin.register(Player)

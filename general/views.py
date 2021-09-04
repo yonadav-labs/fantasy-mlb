@@ -194,7 +194,7 @@ def get_players(request):
     for ii in Player.objects.filter(slate=slate, team__in=teams):
         player = model_to_dict(ii, fields=['id', 'injury', 'avatar', 'salary', 'team',
                                            'actual_position', 'first_name', 'last_name',
-                                           'handedness', 'start', 'start_status', 'opponent'])
+                                           'handedness', 'order', 'confirmed', 'opponent'])
         if ds == 'FanDuel' and ii.actual_position == 'C':
             player['actual_position'] = 'C/1B'
 
@@ -394,7 +394,7 @@ def update_field(request):
     model_name = data.get('model')
     id = data.get('id')
     field = data.get('field')
-    val = data.get('val') if field != 'start_status' else data.get('val') == 'true'
+    val = data.get('val') if field != 'confirmed' else data.get('val') == 'true'
 
     model_cls = apps.get_model('general', model_name)
     model = model_cls.objects.get(pk=id)

@@ -40,8 +40,8 @@ class Player(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
-    injury = models.CharField(max_length=250, blank=True, null=True, default="")
-    opponent = models.CharField(max_length=50, blank=True, null=True, default="")
+    injury = models.CharField(max_length=250, blank=True)
+    opponent = models.CharField(max_length=50)
     position = models.CharField(max_length=50)
     actual_position = models.CharField(max_length=50)
     proj_points = models.FloatField()
@@ -50,9 +50,9 @@ class Player(models.Model):
     team = models.CharField(max_length=50)
     play_today = models.BooleanField(default=False)
     opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
-    handedness = models.CharField(max_length=5, blank=True, null=True, default="")
-    start = models.CharField(max_length=5, blank=True, null=True, default="")
-    start_status = models.BooleanField(default=False)
+    handedness = models.CharField(max_length=5, blank=True)
+    order = models.CharField(max_length=5, blank=True)
+    confirmed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -82,10 +82,10 @@ class BasePlayer(models.Model):
     avatar = models.CharField(max_length=250, default="/static/img/nba.ico")
     team = models.CharField(max_length=50)
     injury = models.CharField(max_length=250, blank=True, default='')  # from FD
-    handedness = models.CharField(max_length=5, blank=True, null=True)
+    handedness = models.CharField(max_length=5, blank=True)
     opp_pitcher_id = models.PositiveIntegerField(blank=True, null=True)
-    start = models.CharField('Order', max_length=5, blank=True, null=True)
-    start_status = models.CharField('Confirm', max_length=5, blank=True, null=True)
+    order = models.CharField(max_length=5, blank=True)
+    confirmed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

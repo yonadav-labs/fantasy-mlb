@@ -27,10 +27,10 @@ def get_base_player(name, player_names):
 def get_custom_projection(name, player_names):
     match = process.extractOne(name, player_names, scorer=fuzz.token_sort_ratio)
     proj_str = match[0].split('@#@')[1]
-    original_proj = float(proj_str)
-    proj = original_proj + get_delta(original_proj)
+    proj = float(proj_str)
+    delta = get_delta(proj)
 
-    return proj, original_proj
+    return proj, delta
 
 
 def load_players(slate, players_info, projection_info):
@@ -60,19 +60,19 @@ def load_players(slate, players_info, projection_info):
             actual_position = player_info['Position']
             position = player_info['Roster Position']
             salary = player_info['Salary'] or 0
-            injury = player_info['Injury Details']
+            injury = player_info['Injury Details'] or ''
 
         visit_team, home_team, _ = parse_game_info(slate.data_source, game_info)
         if not visit_team:
             continue
         opponent = f'@{home_team}' if visit_team==team else visit_team
 
-        proj_points, original_proj = get_custom_projection(name, projection_info)
+        original_proj, delta = get_custom_projection(name, projection_info)
 
         if original_proj:
             base_player = get_base_player(name, base_names)
             handedness = base_player.handedness
-            start = base_player.start
+            order = base_player.order
             opp_pitcher_id = base_player.opp_pitcher_id
 
             if slate.data_source == 'FanDuel':  # put FD's injury
@@ -82,7 +82,7 @@ def load_players(slate, players_info, projection_info):
                 injury = base_player.injury or ''
         else:
             handedness = ''
-            start = ''
+            order = ''
             opp_pitcher_id = None
 
         player, _ = Player.objects.update_or_create(slate=slate,
@@ -93,11 +93,12 @@ def load_players(slate, players_info, projection_info):
                                                     opponent=opponent,
                                                     actual_position=actual_position,
                                                     position=position,
-                                                    proj_points=proj_points,
+                                                    proj_points=original_proj+delta,
+                                                    proj_delta=delta,
                                                     salary=salary,
                                                     injury=injury,
                                                     handedness=handedness,
-                                                    start=start,
+                                                    order=order,
                                                     opp_pitcher_id=opp_pitcher_id
                                                     )
         if original_proj:
