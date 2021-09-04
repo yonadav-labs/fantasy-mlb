@@ -258,7 +258,7 @@ def update_point(request):
     points = request.POST.get('val')
 
     player = Player.objects.get(id=pid.strip('-'))
-    factor = 1 if player.data_source == 'Yahoo' else 1000
+    factor = 1 if player.slate.data_source == 'Yahoo' else 1000
 
     cus_proj = request.session.get('cus_proj', {})
     if '-' in pid:
