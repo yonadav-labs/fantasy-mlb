@@ -12,11 +12,6 @@ def percent(val):
 
 
 @register.filter
-def liked(uid):
-    return 'done' if uid and FavPlayer.objects.filter(player__uid=uid).exists() else ''
-
-
-@register.filter
 def ou_ml(game, team):
     if not game.ml:
         return ''

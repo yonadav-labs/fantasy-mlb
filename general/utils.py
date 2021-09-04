@@ -75,8 +75,8 @@ def get_delta(proj):
     if proj == 0:
         return 0
 
-    factor = (-10, 10)
+    factor = (-100, 100)
     sign = 1 if random.randrange(0, 2) else -1
-    delta = random.randrange(factor[0], factor[1]) / 10.0
+    delta = random.randrange(factor[0], factor[1]) / 100.0
 
     return delta * sign

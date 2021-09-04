@@ -37,7 +37,7 @@ def fetch_players(data_source, data_source_id):
                 'opp_pitcher_id': player['opp_pitcher_id'],
                 'order': '' if player['lineup_status'] == 'Yes' else player['lineup_status'],
                 'handedness': html2text.html2text(player['handedness']).strip().replace('B', 'S'),
-                'confirmed': player['team_lineup_status'] == '',
+                'confirmed': player['team_lineup_status'] == '' and player['lineup_status'] != '',
             }
 
             BasePlayer.objects.update_or_create(uid=player['id'],

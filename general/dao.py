@@ -73,7 +73,9 @@ def load_players(slate, players_info, projection_info):
             base_player = get_base_player(name, base_names)
             handedness = base_player.handedness
             order = base_player.order
+            confirmed = base_player.confirmed
             opp_pitcher_id = base_player.opp_pitcher_id
+            uid = base_player.uid
 
             if slate.data_source == 'FanDuel':  # put FD's injury
                 base_player.injury = injury or ''
@@ -83,10 +85,13 @@ def load_players(slate, players_info, projection_info):
         else:
             handedness = ''
             order = ''
+            confirmed = False
             opp_pitcher_id = None
+            uid = -1
 
         player, _ = Player.objects.update_or_create(slate=slate,
                                                     rid=rid,
+                                                    uid=uid,
                                                     first_name=first_name,
                                                     last_name=last_name,
                                                     team=team,
@@ -99,6 +104,7 @@ def load_players(slate, players_info, projection_info):
                                                     injury=injury,
                                                     handedness=handedness,
                                                     order=order,
+                                                    confirmed=confirmed,
                                                     opp_pitcher_id=opp_pitcher_id
                                                     )
         if original_proj:
