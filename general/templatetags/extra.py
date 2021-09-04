@@ -40,7 +40,7 @@ def cus_proj_(player, session):
     if player:
         cus_proj = session.get('cus_proj', {})
         proj = cus_proj.get(str(player.id), player.proj_points)
-        return '{:.2f}'.format(proj)
+        return '{:.2f}'.format(float(proj))
     return ''
 
 
