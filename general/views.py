@@ -151,14 +151,17 @@ def build_lineup(request):
     pids = []
 
     for ii in lineup:
+        player = {}
         if ii['player']:
+            # need to take care of old player info
+            player = Player.objects.filter(id=ii['player']).first() or {}
+
+        if player:
             pids.append(ii['player'])
-            player = Player.objects.get(id=ii['player'])
             num_players += 1
             sum_salary += player.salary
             sum_proj += float(cus_proj.get(str(player.id), player.proj_points))
-        else:
-            player = {}
+
         players.append({ 'pos':ii['pos'], 'player': player })
 
     sum_proj = f'{sum_proj:.2f}'

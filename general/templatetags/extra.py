@@ -26,7 +26,7 @@ def ou_ml(game, team):
 def cus_proj(player, session):
     cus_proj = session.get('cus_proj', {})
     cus_proj = cus_proj.get(str(player['id']), player['proj_points'])
-    return '{:.2f}'.format(cus_proj)
+    return '{:.2f}'.format(float(cus_proj))
 
 
 @register.filter
