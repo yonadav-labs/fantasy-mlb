@@ -180,6 +180,14 @@ def build_lineup(request):
 @csrf_exempt
 def get_players(request):
     slate_id = request.POST.get('slate_id')
+    if not slate_id:
+        result = { 
+            'html': '',
+            'num_lineups': '',
+        }
+
+        return JsonResponse(result, safe=False)
+
     slate = Slate.objects.get(pk=slate_id)
     ds = slate.data_source
     order = request.POST.get('order', 'proj_points')
@@ -410,7 +418,10 @@ def update_field(request):
 @csrf_exempt
 def get_games(request):
     slate_id = request.POST.get('slate_id')
-    games = Game.objects.filter(slate_id=slate_id)
+    games = []
+    if slate_id:
+        games = Game.objects.filter(slate_id=slate_id)
+
     return render(request, 'game-list.html', locals())
 
 
